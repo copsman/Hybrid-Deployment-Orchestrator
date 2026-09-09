@@ -19,6 +19,8 @@ interface DirectorState {
   focus: Focus;
   reducedMotion: boolean;
   soundOn: boolean;
+  /** cinematic intro overlay; false during SSR, decided on the client */
+  intro: boolean;
   lastResult: StepResult | null;
   runId: number;
 
@@ -32,6 +34,7 @@ interface DirectorState {
   toggleSound: () => void;
   setFocus: (f: Focus) => void;
   registerCamera: (fn: CameraHandler | null) => void;
+  dismissIntro: () => void;
 }
 
 let camera: CameraHandler | null = null;
@@ -100,6 +103,7 @@ export const useDirector = create<DirectorState>()((set, get) => {
     focus: "overview",
     reducedMotion: false,
     soundOn: false,
+    intro: false,
     lastResult: null,
     runId: 0,
 
@@ -203,10 +207,23 @@ export const useDirector = create<DirectorState>()((set, get) => {
     registerCamera: (fn) => {
       camera = fn;
     },
+
+    dismissIntro: () => set({ intro: false }),
   };
 });
 
 /** Call once on the client after mount to load persisted preferences without a hydration mismatch. */
 export function hydrateDirectorPrefs() {
-  useDirector.setState({ reducedMotion: readPref("mjc.reducedMotion", false), soundOn: readPref("mjc.sound", false) });
+  let intro = true;
+  let speed: Speed = 1;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("intro") === "0") intro = false;
+    const sp = Number(params.get("speed"));
+    if (sp === 0.5 || sp === 1 || sp === 2 || sp === 4) speed = sp;
+  } catch {
+    /* no window */
+  }
+  const reducedMotion = readPref("mjc.reducedMotion", false);
+  useDirector.setState({ reducedMotion, soundOn: readPref("mjc.sound", false), intro: intro && !reducedMotion, speed });
 }

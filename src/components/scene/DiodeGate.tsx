@@ -112,12 +112,12 @@ export function DiodeGate() {
       </mesh>
       <pointLight position={[GATE[0], GATE[1] + 0.6, GATE[2]]} color={CYAN} intensity={active ? 8 : 2} distance={6} />
       <group position={[GATE[0], GATE[1] + 1.5, GATE[2]]}>
-        <Html center distanceFactor={14} zIndexRange={[5, 0]} style={{ pointerEvents: "none" }}>
-          <div className="whitespace-nowrap text-center">
-            <div className="font-mono text-[11px] tracking-[0.3em]" style={{ color: focus === "diode" || active ? CYAN : "#d6e2f0", textShadow: active ? `0 0 10px ${CYAN}` : undefined }}>
+        <Html center zIndexRange={[5, 0]} style={{ pointerEvents: "none" }}>
+          <div className="whitespace-nowrap text-center select-none">
+            <div className="font-mono text-[10px] tracking-[0.3em]" style={{ color: focus === "diode" || active ? CYAN : "#d6e2f0", textShadow: active ? `0 0 10px ${CYAN}` : "0 1px 2px rgba(0,0,0,0.8)" }}>
               DATA DIODE
             </div>
-            <div className="text-[10px] text-[#7e8fa5]">{active && diode ? `one-way · ${diode.sent}/${diode.total} chunks · ${diode.bounces} return attempt${diode.bounces === 1 ? "" : "s"} blocked` : "one-way · no return channel"}</div>
+            <div className="text-[9px] text-[#93a4ba]" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.9)" }}>{active && diode ? `one-way · ${diode.sent}/${diode.total} chunks · ${diode.bounces} return attempt${diode.bounces === 1 ? "" : "s"} blocked` : "one-way · no return channel"}</div>
           </div>
         </Html>
       </group>

@@ -9,6 +9,7 @@ import { StatusLED } from "@/components/shared/StatusLED";
 import { useDirector, type Speed } from "@/store/director";
 import { useOrchestrator } from "@/store/orchestrator";
 import { cn } from "@/lib/utils";
+import { MovingBorderBadge } from "@/components/aceternity/moving-border";
 
 const SPEEDS: Speed[] = [0.5, 1, 2, 4];
 
@@ -32,12 +33,12 @@ export function TopBar() {
             <Film className="size-3.5" />
           </span>
           <div className="leading-none">
-            <div className="font-mono text-[13px] font-semibold tracking-[0.28em] text-foreground text-glow">MERIDIAN <span className="text-mjc-cyan">{"//"}</span> VANTAGE</div>
-            <div className="hud-label mt-0.5">Hybrid Deployment Orchestrator · Meridian Joint Command</div>
+            <div className="whitespace-nowrap font-mono text-[13px] font-semibold tracking-[0.28em] text-foreground text-glow">MERIDIAN <span className="text-mjc-cyan">{"//"}</span> VANTAGE</div>
+            <div className="hud-label mt-0.5 whitespace-nowrap">Hybrid Deployment Orchestrator <span className="hidden xl:inline">· Meridian Joint Command</span></div>
           </div>
         </div>
         <span className="mx-1 hidden h-6 w-px bg-border md:block" />
-        <div className="hidden items-center gap-4 md:flex">
+        <div className="hidden items-center gap-4 lg:flex">
           <Pill led={ledgerOk ? "green" : "red"} label="LEDGER" value={ledgerOk ? "INTACT" : "BROKEN"} />
           <Pill led="cyan" label="POLICY" value="MJC-ROUTING 2031.03" />
           <Pill led={status === "playing" ? "amber" : "muted"} label="DIRECTOR" value={status === "idle" ? "STANDBY" : `${status.toUpperCase()} ${stepIndex >= 0 ? `${String(stepIndex + 1).padStart(2, "0")}/${total}` : ""}`} pulse={status === "playing"} />
@@ -48,9 +49,11 @@ export function TopBar() {
         <Clock simNow={simNow} />
         <span className="mx-1 h-6 w-px bg-border" />
         {status === "idle" || status === "done" ? (
-          <Button size="sm" onClick={() => void play()} data-testid="play-scenario" className="gap-1.5 bg-mjc-cyan font-mono text-[11px] tracking-[0.18em] text-primary-foreground hover:bg-mjc-cyan/90">
-            <Play className="size-3.5" /> {status === "done" ? "REPLAY" : "PLAY SCENARIO"}
-          </Button>
+          <MovingBorderBadge duration={2800} className="bg-transparent border-0" containerClassName="rounded-md">
+            <Button size="sm" onClick={() => void play()} data-testid="play-scenario" className="gap-1.5 bg-mjc-cyan font-mono text-[11px] tracking-[0.18em] text-primary-foreground hover:bg-mjc-cyan/90">
+              <Play className="size-3.5" /> {status === "done" ? "REPLAY" : "PLAY SCENARIO"}
+            </Button>
+          </MovingBorderBadge>
         ) : status === "playing" ? (
           <Button size="sm" variant="secondary" onClick={pause} className="gap-1.5 font-mono text-[11px] tracking-[0.18em]">
             <Pause className="size-3.5" /> PAUSE
@@ -104,7 +107,7 @@ export function TopBar() {
 
 function Pill({ led, label, value, pulse }: { led: "cyan" | "green" | "amber" | "red" | "muted"; label: string; value: string; pulse?: boolean }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 whitespace-nowrap">
       <StatusLED tone={led} pulse={pulse} />
       <span className="hud-label">{label}</span>
       <span className={cn("font-mono text-[11px] tracking-wider", led === "red" ? "text-mjc-red" : "text-foreground/90")}>{value}</span>
@@ -134,7 +137,7 @@ function Clock({ simNow }: { simNow: string }) {
     return () => clearInterval(id);
   }, []);
   return (
-    <div className="hidden text-right font-mono leading-none lg:block">
+    <div className="hidden whitespace-nowrap text-right font-mono leading-none lg:block">
       <div className="text-[11px] tracking-[0.2em] text-foreground/90">{wall ?? "--:--:--"}<span className="text-muted-foreground">Z</span></div>
       <div className="hud-label mt-0.5">SIM {simNow.slice(11, 19)}Z · {simNow.slice(0, 10)}</div>
     </div>

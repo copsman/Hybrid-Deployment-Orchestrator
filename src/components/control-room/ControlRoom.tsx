@@ -17,6 +17,8 @@ import { WhatIfPanel } from "./WhatIfPanel";
 import { LogTicker } from "./LogTicker";
 import { Captions } from "./Captions";
 import { AlertOverlay } from "./AlertOverlay";
+import { IntroOverlay } from "./IntroOverlay";
+import { ImportCeremony } from "./ImportCeremony";
 import { useDirector, hydrateDirectorPrefs } from "@/store/director";
 import { useOrchestrator } from "@/store/orchestrator";
 import { sfx } from "@/lib/sfx";
@@ -83,6 +85,7 @@ export function ControlRoom() {
                 <SceneCanvas />
               </div>
               <AlertOverlay />
+              <ImportCeremony />
               <Captions />
               <div className="pointer-events-none absolute right-3 top-3 hud-label rounded-sm border border-border/60 bg-background/70 px-2 py-1">
                 SCRIBE · mjc/scribe-8b · three perimeters
@@ -132,6 +135,7 @@ export function ControlRoom() {
           </aside>
         </main>
         <LogTicker />
+        <IntroOverlay />
       </div>
     </TooltipProvider>
   );

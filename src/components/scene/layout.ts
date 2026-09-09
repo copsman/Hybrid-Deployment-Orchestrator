@@ -16,11 +16,11 @@ export const BARRIER: V3 = [0, 0.7, 2.8];
 
 export const CAMERA_PRESETS: Record<Focus, { pos: V3; target: V3 }> = {
   overview: { pos: [0, 11, 17.5], target: [0.5, 0.4, 0.8] },
-  hub: { pos: [0.5, 5, 7.5], target: [0, 0.6, 0] },
-  cloud: { pos: [-10.5, 6.5, 1.5], target: [-7, 2.2, -4.5] },
-  onprem: { pos: [10.5, 4.5, 2.5], target: [7, 0.6, -3.5] },
-  airgapped: { pos: [9.5, 4.5, 12], target: [7, 0.7, 5.5] },
-  diode: { pos: [3.6, 4.2, 12.5], target: [3.6, 0.7, 5.5] },
+  hub: { pos: [-1.5, 6.5, 9.5], target: [0.3, 0.5, 0.9] },
+  cloud: { pos: [-11.5, 7.5, 2.5], target: [-6.8, 2, -4.5] },
+  onprem: { pos: [11, 5.5, 3.5], target: [7, 0.6, -3.5] },
+  airgapped: { pos: [10.5, 5.5, 13], target: [6.8, 0.7, 5.5] },
+  diode: { pos: [2.8, 4.8, 13], target: [3.8, 0.7, 5.5] },
 };
 
 export function routeCurve(to: EnvId): THREE.QuadraticBezierCurve3 {

@@ -15,12 +15,12 @@ const RED = "#f43f5e";
 
 function Label({ title, sub, tone = CYAN, active }: { title: string; sub: string; tone?: string; active?: boolean }) {
   return (
-    <Html center distanceFactor={14} zIndexRange={[5, 0]} style={{ pointerEvents: "none" }}>
-      <div className="whitespace-nowrap text-center">
-        <div className="font-mono text-[11px] tracking-[0.3em]" style={{ color: active ? tone : "#d6e2f0", textShadow: active ? `0 0 10px ${tone}` : undefined }}>
+    <Html center zIndexRange={[5, 0]} style={{ pointerEvents: "none" }}>
+      <div className="whitespace-nowrap text-center select-none">
+        <div className="font-mono text-[10px] tracking-[0.3em]" style={{ color: active ? tone : "#d6e2f0", textShadow: active ? `0 0 10px ${tone}` : "0 1px 2px rgba(0,0,0,0.8)" }}>
           {title}
         </div>
-        <div className="text-[10px] text-[#7e8fa5]">{sub}</div>
+        <div className="text-[9px] text-[#93a4ba]" style={{ textShadow: "0 1px 2px rgba(0,0,0,0.9)" }}>{sub}</div>
       </div>
     </Html>
   );

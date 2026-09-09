@@ -20,12 +20,12 @@ const PRESETS = Object.entries(SCENARIO_JOBS) as [keyof typeof SCENARIO_JOBS, Jo
 export function SubmitJobForm() {
   const submit = useOrchestrator((s) => s.submit);
   const whatIf = useOrchestrator((s) => s.whatIf);
-  const versions = useOrchestrator((s) => s.snapshot.artefacts.map((a) => a.version));
+  const artefacts = useOrchestrator((s) => s.snapshot.artefacts);
   const [mode, setMode] = useState<"form" | "raw">("form");
   const [form, setForm] = useState<JobInput>({ ...SCENARIO_JOBS.A });
   const [raw, setRaw] = useState<string>(JSON.stringify({ title: "Ad-hoc tasking", classification: "SECRET", egress: true }, null, 2));
 
-  const versionOptions = useMemo(() => Array.from(new Set([...versions, form.modelVersion, "1.5.0"])).sort(), [versions, form.modelVersion]);
+  const versionOptions = useMemo(() => Array.from(new Set([...artefacts.map((a) => a.version), form.modelVersion, "1.5.0"])).sort(), [artefacts, form.modelVersion]);
 
   const onSubmit = (input: unknown) => {
     const r = submit(input, mode === "raw" ? "raw-json" : "operator");

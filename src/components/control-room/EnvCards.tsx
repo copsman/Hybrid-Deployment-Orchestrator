@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { StatusLED } from "@/components/shared/StatusLED";
 import { StackIcon, ENV_ICON } from "@/components/shared/icons";
+import { GlowingEffect } from "@/components/aceternity/glowing-effect";
 import { useOrchestrator } from "@/store/orchestrator";
 import { useDirector } from "@/store/director";
 import type { EnvId, EnvironmentRuntime } from "@/engine";
@@ -46,6 +47,7 @@ export function EnvCards() {
             data-testid={`env-card-${id}`}
           >
             <div className="pointer-events-none absolute inset-0 bg-grid-fine opacity-40" />
+            <GlowingEffect spread={32} proximity={72} inactiveZone={0.2} borderWidth={1.5} />
             <div className="relative">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2">
@@ -63,7 +65,7 @@ export function EnvCards() {
               </div>
 
               <div className="mt-3 grid grid-cols-3 gap-2 font-mono text-[10px]">
-                <Stat label="CAPACITY" value={cap === null ? `${used} · elastic` : `${used}/${cap} GPU`} />
+                <Stat label={cap === null ? "ELASTIC" : "CAPACITY"} value={cap === null ? `${used} running` : `${used}/${cap} GPU`} />
                 <Stat label="QUEUE" value={String(env.queue.length)} tone={env.queue.length ? "amber" : undefined} />
                 <Stat label="CREDITS" value={env.spentCredits.toFixed(1)} />
               </div>
