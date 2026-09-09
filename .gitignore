@@ -44,3 +44,6 @@ next-env.d.ts
 /.vitest
 /playwright-report
 /test-results
+
+# submission render scratch
+/docs/submission/.render.html

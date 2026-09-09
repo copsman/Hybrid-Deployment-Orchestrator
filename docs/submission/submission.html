@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>MERIDIAN // VANTAGE — Hackathon submission</title>
+<style>
+  @font-face { font-family: "Geist"; src: url("../../node_modules/geist/dist/fonts/geist-sans/Geist-Regular.woff2") format("woff2"); font-weight: 400; font-display: block; }
+  @font-face { font-family: "Geist"; src: url("../../node_modules/geist/dist/fonts/geist-sans/Geist-Medium.woff2") format("woff2"); font-weight: 500; font-display: block; }
+  @font-face { font-family: "Geist"; src: url("../../node_modules/geist/dist/fonts/geist-sans/Geist-SemiBold.woff2") format("woff2"); font-weight: 600; font-display: block; }
+  @font-face { font-family: "Geist"; src: url("../../node_modules/geist/dist/fonts/geist-sans/Geist-Bold.woff2") format("woff2"); font-weight: 700; font-display: block; }
+  @font-face { font-family: "Geist Mono"; src: url("../../node_modules/geist/dist/fonts/geist-mono/GeistMono-Regular.woff2") format("woff2"); font-weight: 400; font-display: block; }
+  @font-face { font-family: "Geist Mono"; src: url("../../node_modules/geist/dist/fonts/geist-mono/GeistMono-Medium.woff2") format("woff2"); font-weight: 500; font-display: block; }
+
+  @page { size: 297mm 210mm; margin: 0; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; padding: 0; background: #05070b; color: #d6e2f0; font-family: "Geist", ui-sans-serif, system-ui, sans-serif; font-size: 9.4pt; line-height: 1.32; }
+  .mono { font-family: "Geist Mono", ui-monospace, monospace; }
+
+  .page { position: relative; width: 297mm; height: 210mm; overflow: hidden; padding: 12mm 14mm 11mm; background: #05070b; break-after: page; page-break-after: always;
+    background-image: linear-gradient(to right, rgba(34,211,238,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(34,211,238,0.05) 1px, transparent 1px), radial-gradient(ellipse 70% 40% at 50% -10%, rgba(34,211,238,0.10), transparent 60%);
+    background-size: 12mm 12mm, 12mm 12mm, 100% 100%; }
+  .page:last-child { break-after: auto; page-break-after: auto; }
+
+  .corner { position: absolute; width: 6mm; height: 6mm; border-color: rgba(34,211,238,0.7); border-style: solid; border-width: 0; }
+  .corner.tl { top: 6mm; left: 6mm; border-top-width: 1px; border-left-width: 1px; }
+  .corner.tr { top: 6mm; right: 6mm; border-top-width: 1px; border-right-width: 1px; }
+  .corner.bl { bottom: 6mm; left: 6mm; border-bottom-width: 1px; border-left-width: 1px; }
+  .corner.br { bottom: 6mm; right: 6mm; border-bottom-width: 1px; border-right-width: 1px; }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5mm; }
+  .label { font-family: "Geist Mono", monospace; font-size: 7pt; letter-spacing: 0.22em; text-transform: uppercase; color: #7e8fa5; }
+  .label b { color: #22d3ee; font-weight: 500; }
+  h1 { margin: 0; font-family: "Geist Mono", monospace; font-weight: 600; letter-spacing: 0.28em; font-size: 26pt; color: #e6f0fa; text-shadow: 0 0 14px rgba(34,211,238,0.35); }
+  h1 .slash { color: #22d3ee; }
+  h2 { margin: 0 0 2.5mm; font-size: 16.5pt; font-weight: 600; letter-spacing: -0.01em; color: #eef4fb; }
+  h3 { margin: 0 0 1.6mm; font-family: "Geist Mono", monospace; font-size: 7.4pt; letter-spacing: 0.2em; text-transform: uppercase; color: #22d3ee; font-weight: 500; }
+  p { margin: 0 0 1.8mm; }
+  ul { margin: 0; padding-left: 4.2mm; }
+  li { margin: 0 0 0.9mm; }
+  li::marker { color: #22d3ee; }
+  .muted { color: #93a4ba; }
+  .small { font-size: 8.4pt; }
+  .xs { font-size: 7.6pt; }
+
+  .grid { display: grid; gap: 5mm; }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+  .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card { border: 1px solid rgba(26,36,51,1); background: rgba(10,15,23,0.75); border-radius: 2mm; padding: 3mm 3.6mm; }
+  .card.cyan { border-color: rgba(34,211,238,0.45); }
+  .card.red { border-color: rgba(244,63,94,0.5); }
+  .card.amber { border-color: rgba(245,158,11,0.5); }
+  .card.green { border-color: rgba(52,211,153,0.5); }
+  .shot { width: 100%; border: 1px solid rgba(34,211,238,0.35); border-radius: 1.5mm; display: block; box-shadow: 0 0 18px rgba(34,211,238,0.12); }
+  .cap { font-family: "Geist Mono", monospace; font-size: 7pt; letter-spacing: 0.14em; color: #7e8fa5; margin-top: 1.5mm; text-transform: uppercase; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 7.9pt; }
+  th { text-align: left; font-family: "Geist Mono", monospace; font-weight: 500; font-size: 6.6pt; letter-spacing: 0.16em; text-transform: uppercase; color: #7e8fa5; padding: 1mm 1.8mm; border-bottom: 1px solid rgba(26,36,51,1); }
+  td { padding: 1.1mm 1.8mm; border-bottom: 1px solid rgba(26,36,51,0.7); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .chip { display: inline-block; font-family: "Geist Mono", monospace; font-size: 7pt; letter-spacing: 0.16em; text-transform: uppercase; padding: 0.4mm 1.6mm; border-radius: 0.8mm; border: 1px solid; white-space: nowrap; }
+  .c-open { color: #22d3ee; border-color: rgba(34,211,238,0.5); background: rgba(34,211,238,0.08); }
+  .c-restricted { color: #f59e0b; border-color: rgba(245,158,11,0.5); background: rgba(245,158,11,0.08); }
+  .c-secret { color: #f43f5e; border-color: rgba(244,63,94,0.55); background: rgba(244,63,94,0.08); }
+  .c-onyx { color: #a78bfa; border-color: rgba(167,139,250,0.55); background: rgba(167,139,250,0.08); }
+  .c-ok { color: #34d399; border-color: rgba(52,211,153,0.5); background: rgba(52,211,153,0.08); }
+  .c-ref { color: #f43f5e; border-color: rgba(244,63,94,0.55); background: rgba(244,63,94,0.08); }
+  .c-muted { color: #93a4ba; border-color: rgba(26,36,51,1); }
+
+  .flow { display: flex; align-items: stretch; gap: 2mm; }
+  .flow .node { flex: 1; border: 1px solid rgba(34,211,238,0.35); border-radius: 1.5mm; padding: 2mm 2.3mm; background: rgba(10,15,23,0.8); }
+  .flow .node .t { font-family: "Geist Mono", monospace; font-size: 7.5pt; letter-spacing: 0.16em; color: #22d3ee; text-transform: uppercase; margin-bottom: 1mm; }
+  .flow .node .d { font-size: 7.6pt; color: #b6c4d6; }
+  .flow .arrow { align-self: center; color: #22d3ee; font-family: "Geist Mono", monospace; font-size: 11pt; }
+  .pipeline { font-family: "Geist Mono", monospace; font-size: 7pt; letter-spacing: 0.06em; color: #b6c4d6; padding: 2.5mm 3mm; border: 1px dashed rgba(34,211,238,0.35); border-radius: 1.5mm; background: rgba(10,15,23,0.6); }
+  .pipeline b { color: #22d3ee; font-weight: 500; }
+  .pipeline .r { color: #f43f5e; }
+
+  .kpi { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3mm; }
+  .kpi .k { border: 1px solid rgba(26,36,51,1); border-radius: 1.5mm; padding: 2.4mm 2.6mm; background: rgba(10,15,23,0.75); }
+  .kpi .k .v { font-family: "Geist Mono", monospace; font-size: 17pt; color: #e6f0fa; line-height: 1; }
+  .kpi .k .l { font-family: "Geist Mono", monospace; font-size: 6.8pt; letter-spacing: 0.18em; color: #7e8fa5; text-transform: uppercase; margin-top: 1.4mm; }
+
+  .footer { position: absolute; left: 14mm; right: 14mm; bottom: 6.5mm; display: flex; justify-content: space-between; font-family: "Geist Mono", monospace; font-size: 6.8pt; letter-spacing: 0.16em; color: #7e8fa5; text-transform: uppercase; }
+  .footer b { color: #22d3ee; font-weight: 500; }
+
+  /* title page */
+  .title-wrap { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 8mm; height: 170mm; align-items: center; }
+  .title-wrap h1 { font-size: 40pt; letter-spacing: 0.3em; line-height: 1.05; }
+  .tagline { font-size: 15pt; color: #c8d6e6; margin: 5mm 0 4mm; }
+  .sub { font-family: "Geist Mono", monospace; letter-spacing: 0.3em; font-size: 9pt; color: #22d3ee; text-transform: uppercase; }
+  .meta { display: grid; grid-template-columns: 34mm 1fr; row-gap: 1.6mm; column-gap: 3mm; font-size: 9pt; margin-top: 5mm; }
+  .meta .k { font-family: "Geist Mono", monospace; font-size: 7pt; letter-spacing: 0.18em; text-transform: uppercase; color: #7e8fa5; padding-top: 0.6mm; }
+  .chips { display: flex; flex-wrap: wrap; gap: 1.5mm; margin-top: 3mm; }
+  .env3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; }
+  .env3 .e { border-radius: 1.5mm; padding: 2.6mm 2.8mm; background: rgba(10,15,23,0.75); border: 1px solid; }
+  .env3 .e .n { font-family: "Geist Mono", monospace; font-size: 7.5pt; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.8mm; }
+  .env3 .e .s { font-size: 8pt; color: #b6c4d6; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ 1. TITLE -->
+<section class="page">
+  <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+  <div class="topbar">
+    <div class="label"><b>01</b> · Title</div>
+    <div class="label">Hackathon submission · {{DATE}}</div>
+  </div>
+  <div class="title-wrap">
+    <div>
+      <div class="sub">Meridian Joint Command · Digital Assurance</div>
+      <h1 style="margin-top:4mm">MERIDIAN <span class="slash">//</span><br/>VANTAGE</h1>
+      <div class="tagline">Hybrid Deployment Orchestrator<br/><span class="muted">Cloud + On-Prem + Air-Gapped simulation</span></div>
+      <p style="font-size:11.5pt;color:#c8d6e6;max-width:120mm">One model. Three perimeters. Every decision justified. A simulator and control room that deploys the same signed AI model everywhere, routes each job by classification policy, refuses what must not run, and proves it in a hash-chained ledger.</p>
+      <div class="meta">
+        <div class="k">Team</div><div>{{TEAM}}</div>
+        <div class="k">Repository</div><div class="mono small">github.com/copsman/Hybrid-Deployment-Orchestrator</div>
+        <div class="k">Live demo</div><div class="mono small">{{LIVE_URL}}</div>
+        <div class="k">Run locally</div><div class="mono small">npm ci &amp;&amp; npm run dev · npm run demo · npm test</div>
+      </div>
+      <div class="chips">
+        <span class="chip c-muted">Next.js 16</span><span class="chip c-muted">TypeScript</span><span class="chip c-muted">react-three-fiber</span><span class="chip c-muted">shadcn/ui</span><span class="chip c-muted">Ed25519 · SHA-256</span><span class="chip c-muted">vitest · fast-check · Playwright</span><span class="chip c-muted">Vercel</span>
+      </div>
+    </div>
+    <div>
+      <img class="shot" src="../screenshots/scenario-complete.png" alt="Control room after the scenario" />
+      <div class="cap">Control room after the scenario · 3 jobs routed · 3 refused · parity verified · ledger intact</div>
+      <div class="env3" style="margin-top:4mm">
+        <div class="e" style="border-color:rgba(34,211,238,0.5)"><div class="n" style="color:#22d3ee">Cloud</div><div class="s">Meridian Cloud Region North · elastic · external</div></div>
+        <div class="e" style="border-color:rgba(245,158,11,0.5)"><div class="n" style="color:#f59e0b">On-prem</div><div class="s">Fort Meridian Datacentre · 4 GPU · proxied</div></div>
+        <div class="e" style="border-color:rgba(244,63,94,0.55)"><div class="n" style="color:#f43f5e">Air-gapped</div><div class="s">Enclave OBSIDIAN · 2 GPU · no network · diode</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span><b>MERIDIAN // VANTAGE</b> · all names, units and places are fictional</span><span>page 1 / 5</span></div>
+</section>
+
+<!-- ============================================================ 2. OBJECTIVE -->
+<section class="page">
+  <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+  <div class="topbar">
+    <div class="label"><b>02</b> · Project objective</div>
+    <div class="label">Fit to the brief · relevance</div>
+  </div>
+  <h2>Government AI never lives in one place. The model still has to.</h2>
+  <div class="grid cols-2" style="margin-top:4mm">
+    <div>
+      <div class="card" style="margin-bottom:4mm">
+        <h3>The problem</h3>
+        <p class="small">Some data may go to public cloud, some must stay on-prem, and the most sensitive must never leave an air-gapped enclave. Today that means three pipelines maintained by hand, a change board deciding by email where a request may run, spreadsheets tracking which model version sits where, and artefacts carried into the enclave on media nobody verifies. Each step is a place where a SECRET request lands in the wrong perimeter or the enclave runs a stale or tampered model.</p>
+      </div>
+      <div class="card" style="margin-bottom:4mm">
+        <h3>Who buys and deploys it · what it replaces</h3>
+        <ul class="small">
+          <li><b>Buyer:</b> the digital-assurance or platform directorate of a defence or government organisation that already runs a sovereign cloud tenancy, a datacentre and accredited enclaves, and the integrators who build for them.</li>
+          <li><b>Operator:</b> the platform team that owns all three environments and the security officers who approve what enters the enclave.</li>
+          <li><b>Replaces:</b> per-environment pipelines, manual routing decisions, unverified media transfers and audit spreadsheets, with one policy plane over the platforms they already run (Kubernetes, vLLM, registries, a diode).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Why this approach now, not the one of three years ago</h3>
+        <ul class="small">
+          <li><b>Open-weight models</b> served by vLLM behind an OpenAI-compatible gateway make "the same model in every perimeter" practical; three years ago the capable models were API-only.</li>
+          <li><b>Policy as code</b> (OPA, Cedar) and <b>supply-chain signing</b> (Sigstore, SLSA) are standard practice; the router and the signed pipeline apply the same ideas to model deployment.</li>
+          <li><b>Sovereign and air-gapped cloud</b> and unidirectional gateways are commercial products; regulation increasingly demands a tamper-evident record of automated decisions.</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card cyan" style="margin-bottom:4mm">
+        <h3>Objective · the minimum deliverable, and how we meet it</h3>
+        <table>
+          <tr><th style="width:44%">Brief asks for</th><th>MERIDIAN // VANTAGE delivers</th></tr>
+          <tr><td>Three simulated environments with different properties</td><td>Cloud (elastic, metered, external), On-prem (4 fixed GPU slots, queue, proxied egress), Air-gapped (2 slots, no network, diode import)</td></tr>
+          <tr><td>Classification scheme and routing policies</td><td>OPEN / RESTRICTED / SECRET / ONYX plus attributes (personal data, live retrieval, releasability, model version); eight rules as data, default DENY</td></tr>
+          <tr><td>Router that logs decision and justification</td><td>Every submission yields a full record: rule trace, candidate table, verdict, tie-break, ledger hash</td></tr>
+          <tr><td>Deployment view incl. how the artefact reached the enclave</td><td>Version matrix with SHA-256 parity; pipeline view from build to diode, quarantine, two-person approval, verify, load</td></tr>
+          <tr><td>Blocked-request path with the reason shown</td><td>Three distinct refusals: no accredited environment, version not yet imported, contradictory constraints; plus what-if counterfactuals</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>Design principles</h3>
+        <ul class="small">
+          <li><b>Deny by default.</b> A job runs only where a rule explicitly grants it; capability checks can only remove options, never add them.</li>
+          <li><b>Nothing spills downward.</b> A full on-prem queues; it never bursts RESTRICTED work to cloud.</li>
+          <li><b>Refuse rather than downgrade.</b> If the enclave lacks the requested version, the job is refused with the reason, not silently run on an older model.</li>
+          <li><b>Everything is evidence.</b> Decisions and imports are links in a hash chain that anyone can recompute.</li>
+          <li><b>Proves itself headless.</b> The engine is pure TypeScript; the film on top is optional.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span><b>MERIDIAN // VANTAGE</b> · project objective</span><span>page 2 / 5</span></div>
+</section>
+
+<!-- ============================================================ 3. SOLUTION -->
+<section class="page">
+  <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+  <div class="topbar">
+    <div class="label"><b>03</b> · Proposed solution</div>
+    <div class="label">Architecture · same model, three stacks</div>
+  </div>
+  <h2>One policy plane, three real stacks, one signed artefact through the diode.</h2>
+
+  <div class="flow" style="margin:3mm 0 3.5mm">
+    <div class="node"><div class="t">Job</div><div class="d">title, classification, personal data, live retrieval, releasability, model version, latency · validated by zod, never crashes</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="t">Policy engine</div><div class="d">rules.json evaluated top-down: RESTRICT_TO grants, EXCLUDE subtracts, REFUSE ends · default DENY · every rule traced</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="t">Capability + selection</div><div class="d">CAP-VERSION (loaded there?), CAP-EGRESS (network?), CAP-SLOTS (queue) · then free capacity → cost → free slots</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="t">Environment</div><div class="d">dispatch or queue in cloud / on-prem / enclave; enclave egress guard blocks any outbound call</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="t">Ledger</div><div class="d">hash<sub>n</sub> = SHA-256(hash<sub>n-1</sub> ‖ canonical-json(entry<sub>n</sub>)) · decisions, dispatches, imports · verifiable, tamper-evident</div></div>
+  </div>
+
+  <div class="pipeline" style="margin-bottom:3.5mm">
+    <b>ARTEFACT PIPELINE</b> &nbsp; BUILT → SIGNED (Ed25519 over canonical manifest) → PUBLISHED (cloud registry) → MIRRORED (on-prem Harbor via proxy) → STAGED → <b>IN_DIODE</b> (chunked, one-way, no ACK; return attempts bounce and are counted) → QUARANTINE (AV + file type) → <b>VERIFYING</b> (two distinct operators) → IMPORTED (signer = pinned key · signature valid · SHA-256 matches · size · not a downgrade) → LOADED &nbsp; <span class="r">└ REJECTED on any failed check</span>
+  </div>
+
+  <div class="grid" style="grid-template-columns: 1.5fr 1fr; gap: 4mm">
+    <div class="card">
+      <h3>Same model · three stacks</h3>
+      <table class="xs">
+        <tr><th>Layer</th><th style="color:#22d3ee">Cloud</th><th style="color:#f59e0b">On-prem</th><th style="color:#f43f5e">Air-gapped</th></tr>
+        <tr><td>App</td><td>Vercel (Next.js)</td><td>Next.js standalone on k3s</td><td>Same image, diode-imported</td></tr>
+        <tr><td>AI gateway</td><td>Vercel AI Gateway</td><td>Self-hosted OpenAI-compatible gateway</td><td>Same, offline, no external providers</td></tr>
+        <tr><td>Model serving</td><td>Managed GPU inference (vLLM)</td><td>vLLM on 4 GPU nodes</td><td>vLLM offline, weights from signed bundle</td></tr>
+        <tr><td>Database</td><td>Supabase Cloud (Postgres, pgvector)</td><td>Self-hosted Supabase</td><td>Postgres + pgvector, local backups</td></tr>
+        <tr><td>Identity</td><td>Supabase Auth</td><td>Keycloak</td><td>Keycloak offline, smart-card</td></tr>
+        <tr><td>Registry</td><td>GHCR</td><td>Harbor mirror (proxy sync)</td><td>Harbor, fed only by verified imports</td></tr>
+        <tr><td>Secrets · Observability</td><td>Vercel env · Langfuse Cloud</td><td>Vault · Langfuse + Prometheus</td><td>Vault sealed · Langfuse offline</td></tr>
+        <tr><td>Updates · Network</td><td>CI/CD push · external</td><td>Scheduled proxy pull · proxied</td><td>Diode import, two-person · none</td></tr>
+      </table>
+      <p class="xs muted" style="margin:1.6mm 0 0">Parity compares the SHA-256 of the loaded weights across the three environments. In production: evaluator → OPA/Cedar sidecar, signer → Sigstore cosign, diode → commercial unidirectional gateway.</p>
+    </div>
+    <div>
+      <img class="shot" src="../screenshots/diode-transfer.png" alt="One-way diode transfer" style="width:88%;margin:0 auto" />
+      <div class="cap" style="text-align:center">Director mode: chunks cross the diode; the enclave's ACK bounces off the gate</div>
+      <div class="card" style="margin-top:2.5mm">
+        <h3>Under the hood</h3>
+        <ul class="xs">
+          <li><b>Pure TypeScript engine</b> runs in the browser, in Node (<span class="mono">npm run demo</span>) and in the tests; deterministic seed, clock and PRNG.</li>
+          <li><b>Crypto:</b> SHA-256 + Ed25519 (RFC 8032, strict) from audited noble libraries over canonical JSON. No encryption, so no nonce to reuse.</li>
+          <li><b>Control room:</b> Next.js 16, shadcn/ui, a react-three-fiber scene with a 2D fallback, and a scripted director that plays the scenario like a film.</li>
+          <li><b>What-if:</b> dry-run plus single-change counterfactuals for refused jobs.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span><b>MERIDIAN // VANTAGE</b> · proposed solution</span><span>page 3 / 5</span></div>
+</section>
+
+<!-- ============================================================ 4. VALIDATION -->
+<section class="page">
+  <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+  <div class="topbar">
+    <div class="label"><b>04</b> · Solution validation</div>
+    <div class="label">Does it work · is it correct · does it survive</div>
+  </div>
+  <h2>Three classifications, three environments, three distinct refusals.</h2>
+  <div class="grid" style="grid-template-columns: 1.3fr 1fr; gap: 4mm; margin-top:2mm">
+    <div>
+      <div class="card" style="margin-bottom:3mm">
+        <h3>The demo scenario · identical on every run (seeded)</h3>
+        <table class="xs">
+          <tr><th>Job</th><th>Classification · attributes</th><th>Outcome</th><th>Why</th></tr>
+          <tr><td class="mono">A</td><td><span class="chip c-open">OPEN</span> public-affairs brief</td><td><span class="chip c-ok">→ CLOUD</span></td><td>POL-05 permits cloud or on-prem; cloud wins on cost (6.3 vs 10.2 credits)</td></tr>
+          <tr><td class="mono">B</td><td><span class="chip c-restricted">RESTRICTED</span> personal data</td><td><span class="chip c-ok">→ ON-PREM</span></td><td>POL-04 sovereign perimeter; POL-06 excludes cloud for personal data</td></tr>
+          <tr><td class="mono">C</td><td><span class="chip c-secret">SECRET</span> needs model 1.4.0</td><td><span class="chip c-ref">REFUSED</span></td><td>CAP-VERSION: enclave still runs 1.3.0; refuse rather than downgrade</td></tr>
+          <tr><td class="mono">—</td><td>Ship 1.4.0 through the pipeline</td><td><span class="chip c-ok">PARITY OK</span></td><td>Same SHA-256 in cloud, on-prem and enclave after diode + two-person import</td></tr>
+          <tr><td class="mono">C′</td><td><span class="chip c-secret">SECRET</span> same job again</td><td><span class="chip c-ok">→ AIR-GAPPED</span></td><td>POL-02: SECRET executes only inside the enclave</td></tr>
+          <tr><td class="mono">D</td><td><span class="chip c-onyx">ONYX</span> compartmented</td><td><span class="chip c-ref">REFUSED</span></td><td>POL-01: no environment in this deployment is accredited for ONYX</td></tr>
+          <tr><td class="mono">E</td><td><span class="chip c-secret">SECRET</span> live external retrieval</td><td><span class="chip c-ref">REFUSED</span></td><td>POL-03: SECRET means the enclave; the enclave has no network</td></tr>
+        </table>
+      </div>
+      <div class="grid cols-2" style="gap:3.5mm">
+        <div class="card">
+          <h3>Automated checks</h3>
+          <ul class="xs">
+            <li><b>40 vitest tests</b>, property-based with fast-check: SECRET never on cloud or on-prem; ONYX always refused; live retrieval never in the enclave; personal data never in cloud; every verdict has a rule id and justification; ledger tampering detected at any position; flipped byte or wrong signer always rejected; schema never throws.</li>
+            <li><b>Headless demo</b> exits non-zero on failure; CI runs it twice and diffs decisions, digests and ledger head.</li>
+            <li><b>Playwright</b> plays the UI to "SCENARIO COMPLETE", breaks and restores the ledger, submits garbage JSON, resets.</li>
+            <li><b>Fresh clone:</b> <span class="mono">npm ci</span>, demo, tests and build pass from a clean checkout.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Unexpected input and second runs</h3>
+          <ul class="xs">
+            <li>Malformed JSON, unknown classifications, wrong types and extra fields are rejected with field-level messages; nothing is dispatched.</li>
+            <li>Downgrade imports are refused; tampered bundles are rejected with the failing check named.</li>
+            <li>Reset restores the seed: a second run reproduces the first, hash for hash.</li>
+            <li>No WebGL or a scene error drops to the 2D map; an error boundary keeps the screen readable.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div>
+      <img class="shot" src="../screenshots/decision-trace.png" alt="Decision record" style="width:72%;margin:0 auto" />
+      <div class="cap" style="text-align:center">Decision record: verdict, justification, rule trace, candidates, ledger hash</div>
+      <img class="shot" src="../screenshots/import-ceremony.png" alt="Import ceremony" style="width:72%;margin:2mm auto 0" />
+      <div class="cap" style="text-align:center">Import ceremony: scan, two approvals, pinned key, signature, digest, load</div>
+      <div class="card green" style="margin-top:2.5mm">
+        <h3>Cryptography, applied deliberately</h3>
+        <p class="xs" style="margin:0">SHA-256 for digests and the ledger chain; Ed25519 (strict RFC 8032) over a canonical JSON encoding that is property-tested for key-order independence, so a re-serialised manifest verifies and an edited one does not. Nothing is encrypted: integrity and authenticity are the requirement, confidentiality across the gap is the diode's physical property, so there is no nonce to reuse. Keys derive from the demo seed; in production the build key lives in an HSM and only the public half is pinned in each environment.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span><b>MERIDIAN // VANTAGE</b> · solution validation</span><span>page 4 / 5</span></div>
+</section>
+
+<!-- ============================================================ 5. RESULTS -->
+<section class="page">
+  <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+  <div class="topbar">
+    <div class="label"><b>05</b> · Results and conclusions</div>
+    <div class="label">What we showed · what is next</div>
+  </div>
+  <h2>The prototype completes the brief end to end, deterministically, from a single command.</h2>
+  <div class="kpi" style="margin:3mm 0 4mm">
+    <div class="k"><div class="v">3 / 3</div><div class="l">jobs routed to the correct perimeter</div></div>
+    <div class="k"><div class="v">3</div><div class="l">refusals, each with a distinct logged reason</div></div>
+    <div class="k"><div class="v">2</div><div class="l">model versions with digest parity in all three envs</div></div>
+    <div class="k"><div class="v">33</div><div class="l">hash-chained ledger entries per run, verifiable</div></div>
+    <div class="k"><div class="v">40 + 2</div><div class="l">unit / property tests + browser tests, all green</div></div>
+    <div class="k"><div class="v">0</div><div class="l">API keys, network calls or databases required</div></div>
+  </div>
+  <div class="grid cols-3">
+    <div class="card cyan">
+      <h3>What is new here</h3>
+      <ul class="xs">
+        <li><b>Refuse, then explain.</b> What-if counterfactuals tell an operator the one change that would make a refused job routable, without dispatching anything.</li>
+        <li><b>Decisions as evidence.</b> Routing history is a SHA-256 hash chain a regulator can recompute; the demo tampers with it live and watches the verifier point at the entry.</li>
+        <li><b>The diode is a first-class actor.</b> One-way transfer with a counted, visible return-path bounce, quarantine, and a two-person ceremony before a pinned-key verification.</li>
+        <li><b>One artefact, three stacks, one digest.</b> Parity turns "consistently deployable everywhere" into a checkable fact.</li>
+        <li><b>Film and proof from the same engine.</b> The 3D director and the headless CLI run identical steps.</li>
+      </ul>
+    </div>
+    <div class="card amber">
+      <h3>Limitations, stated plainly</h3>
+      <ul class="xs">
+        <li>It is a simulator: capacity, cost and latency are modelled, not measured; inference produces a simulated output line.</li>
+        <li>The diode is a state machine, not a protocol implementation; real gateways add forward error correction and out-of-band reconciliation.</li>
+        <li>Policy attributes are declared by the submitter; in production they come from labelled data sources and an identity provider, not a form.</li>
+        <li>Single fictional organisation; coalition releasability across several partners is modelled by one attribute only.</li>
+        <li>The architecture is deliberately the production one, so replacing the evaluator with OPA, the signer with cosign and the environments with real clusters changes adapters, not the control room.</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h3>What is next</h3>
+      <ul class="xs">
+        <li><b>Now:</b> real adapters behind the same interfaces: OpenAI-compatible endpoints for cloud and on-prem vLLM, cosign-signed OCI bundles, an OPA/Rego export of <span class="mono">rules.json</span>, Supabase persistence for the ledger.</li>
+        <li><b>Next:</b> label-derived attributes from data sources and identity claims; coalition releasability with per-partner enclaves; capacity forecasting and cost-aware scheduling windows; SLSA provenance and SBOMs travelling with the bundle.</li>
+        <li><b>Later:</b> an outbound diode for telemetry with differential privacy; hardware attestation of the enclave nodes before load; model watermarking to detect exfiltration; formal checks of the policy (no SECRET path to cloud, ever) with a model checker; a declassification workflow with its own ledger.</li>
+        <li>Full roadmap: <span class="mono">docs/ROADMAP.md</span> in the repository.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:4mm">
+    <h3>Conclusion</h3>
+    <p class="small" style="margin:0">The brief describes a routing problem, a deployment problem and an evidence problem. MERIDIAN // VANTAGE answers all three with one small engine: policy as data that denies by default, a signed artefact that reaches the enclave only through a one-way link and a two-person check, and a ledger that turns every decision into a verifiable link. It runs from the README, survives a second run and hostile input, and the cinematic control room on top makes the argument in ninety seconds. The next step is not more simulation but real adapters, and the interfaces are already there.</p>
+  </div>
+  <div class="footer"><span><b>MERIDIAN // VANTAGE</b> · results and conclusions · github.com/copsman/Hybrid-Deployment-Orchestrator</span><span>page 5 / 5</span></div>
+</section>
+
+</body>
+</html>
