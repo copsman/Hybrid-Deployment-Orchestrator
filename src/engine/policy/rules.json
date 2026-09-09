@@ -1,0 +1,70 @@
+{
+  "policyId": "MJC-ROUTING-POLICY",
+  "version": "2031.03",
+  "authority": "Meridian Joint Command / Directorate of Digital Assurance",
+  "defaultEffect": "DENY",
+  "rules": [
+    {
+      "id": "POL-01",
+      "title": "ONYX has no accredited environment",
+      "when": { "classification": "ONYX" },
+      "effect": "REFUSE",
+      "justification": "No environment in this deployment is accredited for ONYX compartmented material. The request must not execute anywhere."
+    },
+    {
+      "id": "POL-02",
+      "title": "SECRET executes only in the accredited enclave",
+      "when": { "classification": "SECRET" },
+      "effect": "RESTRICT_TO",
+      "environments": ["airgapped"],
+      "justification": "SECRET material may only be processed inside Enclave OBSIDIAN, which has no outbound network."
+    },
+    {
+      "id": "POL-03",
+      "title": "SECRET with live external retrieval is contradictory",
+      "when": { "classification": "SECRET", "egress": true },
+      "effect": "REFUSE",
+      "justification": "SECRET requires the enclave and the enclave has no external network. The job asks for two things that cannot both be true."
+    },
+    {
+      "id": "POL-04",
+      "title": "RESTRICTED stays inside the sovereign perimeter",
+      "when": { "classification": "RESTRICTED" },
+      "effect": "RESTRICT_TO",
+      "environments": ["onprem"],
+      "justification": "RESTRICTED operational data runs at Fort Meridian only. There is no cloud burst for this level, even under load."
+    },
+    {
+      "id": "POL-05",
+      "title": "OPEN may use elastic cloud",
+      "when": { "classification": "OPEN" },
+      "effect": "RESTRICT_TO",
+      "environments": ["cloud", "onprem"],
+      "justification": "OPEN material may run in Meridian Cloud Region North or at Fort Meridian. The cheapest permitted environment wins."
+    },
+    {
+      "id": "POL-06",
+      "title": "Personal data stays on MJC-controlled hardware",
+      "when": { "pii": true },
+      "effect": "EXCLUDE",
+      "environments": ["cloud"],
+      "justification": "Jobs containing personal data are excluded from shared-tenant cloud infrastructure regardless of classification."
+    },
+    {
+      "id": "POL-07",
+      "title": "EYES-ONLY material excludes shared tenancy",
+      "when": { "releasability": "MJC-EYES-ONLY" },
+      "effect": "EXCLUDE",
+      "environments": ["cloud"],
+      "justification": "MJC-EYES-ONLY releasability prohibits execution on infrastructure shared with other tenants."
+    },
+    {
+      "id": "POL-08",
+      "title": "External retrieval cannot run in the enclave",
+      "when": { "egress": true },
+      "effect": "EXCLUDE",
+      "environments": ["airgapped"],
+      "justification": "The enclave has no outbound network. Jobs that need live external retrieval cannot be satisfied there."
+    }
+  ]
+}
