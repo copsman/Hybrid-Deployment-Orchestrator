@@ -148,6 +148,10 @@ The 3D scene is decoration. The **2D** switch in the top bar (or `prefers-reduce
 
 The policy engine plays the role an OPA or Cedar sidecar plays in production; the artefact signing mirrors Sigstore cosign and SLSA provenance; the diode and import ceremony mirror commercial unidirectional gateways and cross-domain solutions; the three environments correspond to a sovereign cloud region, an on-prem Kubernetes estate and an air-gapped distributed-cloud appliance. The same open-weight model is served by vLLM everywhere and addressed through one OpenAI-compatible gateway, which is what makes "same model, three stacks" practical.
 
+## Continuing this project
+
+`docs/HANDOFF.md` is the state-of-the-world document for anyone (or any assistant) picking this up: decisions already made, what is verified, open items, and conventions. `CLAUDE.md` carries the short version that Claude Code loads automatically.
+
 ## Submission deck and roadmap
 
 - `docs/submission/MERIDIAN-VANTAGE-submission.pdf` is the five-page jury deck (title, objective, solution, validation, results). Regenerate it with `npm run submission`; set `SUBMISSION_TEAM` and `SUBMISSION_LIVE_URL` to stamp your team name and Vercel URL onto the title page. The source is `docs/submission/submission.html`.
