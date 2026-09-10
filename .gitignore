@@ -47,3 +47,6 @@ next-env.d.ts
 
 # submission render scratch
 /docs/submission/.render.html
+
+# local Claude Code state (settings, launch config, agent worktrees)
+.claude/

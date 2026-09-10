@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local Claude Code state: settings, launch config and agent worktrees (each with its own .next).
+    ".claude/**",
   ]),
 ]);
 
