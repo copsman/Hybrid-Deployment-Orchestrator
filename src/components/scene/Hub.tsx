@@ -55,6 +55,7 @@ export function Hub() {
 /** Build-and-sign bench on the low side; the bundle token itself is owned by ArtefactFlow. */
 export function Bench() {
   const importKey = useOrchestrator(selImportKey);
+  const focus = useDirector((s) => s.focus);
   const staged = useMemo(() => {
     const state = parseImportKey(importKey).state;
     return state === "BUILT" || state === "SIGNED";
@@ -71,7 +72,7 @@ export function Bench() {
           <circleGeometry args={[0.35, 24]} />
         </mesh>
       )}
-      <SceneText flat text={LABELS.bench} position={[0, 0.12, 0.72]} fontSize={0.14} color={MJC.cyan} outlineWidth={0.02} />
+      {focus === "hub" && <SceneText flat text={LABELS.bench} position={[0, 0.12, 0.72]} fontSize={0.14} color={MJC.cyan} />}
     </group>
   );
 }

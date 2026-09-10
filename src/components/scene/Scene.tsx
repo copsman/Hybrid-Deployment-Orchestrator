@@ -12,6 +12,7 @@ import { Barrier, Bench, Hub } from "./Hub";
 import { Ledger } from "./Ledger";
 import { Site } from "./Site";
 import { DiodeGate } from "./DiodeGate";
+import { ArtefactFlow } from "./ArtefactFlow";
 import { Packets } from "./Packets";
 import { StatsProbe, statsRequested } from "./StatsProbe";
 
@@ -47,6 +48,7 @@ export function Scene() {
         <Site id="onprem" />
         <Site id="airgapped" />
         <DiodeGate />
+        <ArtefactFlow />
         <Packets />
         <CameraRig />
         {stats && <StatsProbe />}

@@ -37,5 +37,18 @@ export function ImportCeremony() {
       else value = 3;
     }
   }
-  return <MultiStepLoader loading={show} value={value} done={done} loadingStates={STATES} title={`Enclave OBSIDIAN · import ceremony · ${NEW_VERSION}`} />;
+  // Docked top-right under the model chip, without a full-frame blur: at the enclave preset the
+  // diode, quarantine tray, consoles and plaque sit on the left of the frame and stay visible,
+  // the card clears the caption box, and the overlay never intercepts pointer events.
+  return (
+    <MultiStepLoader
+      loading={show}
+      value={value}
+      done={done}
+      loadingStates={STATES}
+      title={`Enclave OBSIDIAN · import ceremony · ${NEW_VERSION}`}
+      className="pointer-events-none inset-auto right-3 top-10 items-start justify-end bg-transparent backdrop-blur-none"
+      cardClassName="w-[340px] origin-top-right scale-[0.85] bg-card/85 p-4"
+    />
+  );
 }

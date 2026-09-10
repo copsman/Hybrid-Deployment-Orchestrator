@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Component, useSyncExternalStore, type ReactNode } from "react";
+import { Component, useSyncExternalStore, type ErrorInfo, type ReactNode } from "react";
 import { useDirector } from "@/store/director";
 import { Fallback2D } from "./Fallback2D";
 import { Poster } from "./Poster";
@@ -26,6 +26,10 @@ class SceneBoundary extends Component<{ children: ReactNode; fallback: ReactNode
   state = { failed: false };
   static getDerivedStateFromError() {
     return { failed: true };
+  }
+  componentDidCatch(error: unknown, info: ErrorInfo) {
+    // Render-phase failures only; a throw inside a frame callback never reaches a boundary.
+    console.error("[scene] 3D scene failed, falling back to the 2D map", error, info.componentStack);
   }
   render() {
     return this.state.failed ? this.props.fallback : this.props.children;

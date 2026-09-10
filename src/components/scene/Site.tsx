@@ -159,7 +159,6 @@ export function Site({ id }: { id: EnvId }) {
       {/* pad */}
       <mesh position={[0, PAD.h / 2, 0]} material={m.pad}>
         <boxGeometry args={[PAD.w, PAD.h, PAD.d]} />
-        <Edges color={accent} threshold={15} />
       </mesh>
 
       {/* nine low modules, the same grid everywhere, outlined in the accent */}
@@ -168,19 +167,18 @@ export function Site({ id }: { id: EnvId }) {
           <Instance key={i} position={moduleLocal(i)} />
         ))}
       </Instances>
-      <lineSegments geometry={g.moduleEdges}>
-        <lineBasicMaterial color={accent} transparent opacity={0.45} toneMapped={false} />
+      {/* pad, module and tower outlines in one draw call */}
+      <lineSegments geometry={g.campusEdges}>
+        <lineBasicMaterial color={accent} transparent opacity={0.5} toneMapped={false} />
       </lineSegments>
 
       {/* model-serving tower with its breathing cap */}
-      <mesh position={[towerX, towerY, towerZ]} geometry={g.tower} material={m.body}>
-        <Edges color={accent} threshold={15} />
-      </mesh>
+      <mesh position={[towerX, towerY, towerZ]} geometry={g.tower} material={m.body} />
       <mesh position={[towerX, TOWER_TOP + 0.02, towerZ]}>
         <boxGeometry args={[MODULE.size + 0.02, 0.04, MODULE.size + 0.02]} />
         <meshStandardMaterial ref={cap} color={accent} emissive={accent} emissiveIntensity={0.35} toneMapped={false} />
       </mesh>
-      {slots === null && <SceneText text={LABELS.elastic} position={[towerX, PAD.h + 1.2, towerZ + MODULE.size / 2 + 0.01]} fontSize={0.16} color={accent} outlineWidth={0.02} />}
+      {slots === null && <SceneText text={LABELS.elastic} position={[towerX, PAD.h + 1.2, towerZ + MODULE.size / 2 + 0.01]} fontSize={0.16} color={accent} outlineWidth={0} />}
 
       {/* GPU slot LEDs on the tower face, or elastic pods on the apron: every one is real */}
       <instancedMesh ref={slotMesh} args={[slotGeometry, m.white, slotLimit]} frustumCulled={false} />
@@ -206,8 +204,8 @@ export function Site({ id }: { id: EnvId }) {
           <boxGeometry args={[PLAQUE.w, PLAQUE.h, PLAQUE.d]} />
           <Edges color={plaque.extraTone === "red" ? MJC.red : MJC.green} threshold={15} />
         </mesh>
-        <SceneText text={plaque.loaded} position={[0, plaque.extra ? 0.09 : 0, PLAQUE.d / 2 + 0.005]} fontSize={0.14} letterSpacing={0.04} color={MJC.green} outlineWidth={0.015} />
-        {plaque.extra && <SceneText text={plaque.extra} position={[0, -0.12, PLAQUE.d / 2 + 0.005]} fontSize={0.11} letterSpacing={0.04} color={plaque.extraTone === "red" ? MJC.red : MJC.amber} outlineWidth={0.015} />}
+        <SceneText text={plaque.loaded} position={[0, plaque.extra ? 0.09 : 0, PLAQUE.d / 2 + 0.005]} fontSize={0.14} letterSpacing={0.04} color={MJC.green} outlineWidth={0} />
+        {plaque.extra && <SceneText text={plaque.extra} position={[0, -0.12, PLAQUE.d / 2 + 0.005]} fontSize={0.11} letterSpacing={0.04} color={plaque.extraTone === "red" ? MJC.red : MJC.amber} outlineWidth={0} />}
       </group>
 
       {/* headline, screen-sized so it reads at every preset */}

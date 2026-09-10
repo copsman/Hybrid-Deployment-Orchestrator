@@ -26,7 +26,10 @@ export interface SceneTextProps {
   letterSpacing?: number;
   lineHeight?: number;
   maxWidth?: number;
-  /** world units for in-world text; pixels when `screen` is set (see below) */
+  /**
+   * world units for in-world text, pixels under `screen`; defaults to 0 for `flat` text,
+   * which is engraved on a dark surface and would only pay a second draw call for it
+   */
   outlineWidth?: number;
   fillOpacity?: number;
   /** lay the text on the floor (rotation -90° about x) */
@@ -67,7 +70,7 @@ export function SceneText({
   renderOrder,
   textRef,
 }: SceneTextProps) {
-  const outline = outlineWidth ?? (screen ? 1 : 0.03);
+  const outline = outlineWidth ?? (screen ? 1 : flat ? 0 : 0.03);
   const rot: V3 | undefined = flat ? [-Math.PI / 2, 0, rotation?.[2] ?? 0] : rotation;
   return (
     <Text

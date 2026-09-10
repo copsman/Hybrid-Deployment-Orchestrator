@@ -36,9 +36,9 @@ function ZonePlate({ id }: { id: EnvId }) {
       </mesh>
       <Line points={border} color={accent} transparent opacity={0.5} lineWidth={1.2} dashed dashSize={0.6} gapSize={0.3} />
       {/* upright banner along the back edge, faces the camera */}
-      <SceneText text={zoneBanner(id, spec.network)} position={[cx - 4.5, 1.9, ZONE_Z0 + 0.2]} anchorX="left" textAlign="left" fontSize={0.66} letterSpacing={0.05} lineHeight={1.25} color={accent} outlineWidth={0.03} />
+      <SceneText text={zoneBanner(id, spec.network)} position={[cx - 4.5, 1.9, ZONE_Z0 + 0.2]} anchorX="left" textAlign="left" fontSize={0.66} letterSpacing={0.05} lineHeight={1.25} color={accent} outlineWidth={0} />
       {/* trust marking engraved on the front-left corner of the plate, read at the focused preset */}
-      {focus === id && <SceneText flat text={TRUST_MARK[id]} position={[cx - 4.4, 0.12, ZONE_Z1 - 0.25]} anchorX="left" textAlign="left" fontSize={0.22} color={MJC.mutedFg} outlineWidth={0.02} />}
+      {focus === id && <SceneText flat text={TRUST_MARK[id]} position={[cx - 4.4, 0.12, ZONE_Z1 - 0.25]} anchorX="left" textAlign="left" fontSize={0.22} color={MJC.mutedFg} />}
     </group>
   );
 }
@@ -52,7 +52,7 @@ function PolicyStrip() {
         <boxGeometry args={[STRIP_HALF_W * 2, 0.1, STRIP_Z1 - STRIP_Z0]} />
       </mesh>
       <Line points={border} color={MJC.cyan} transparent opacity={0.35} lineWidth={1.2} dashed dashSize={0.6} gapSize={0.3} />
-      <SceneText flat text={LABELS.stripTitle} position={[-STRIP_HALF_W + 0.4, 0.12, STRIP_Z0 + 0.45]} anchorX="left" textAlign="left" fontSize={0.34} color={MJC.cyan} outlineWidth={0.02} />
+      <SceneText flat text={LABELS.stripTitle} position={[-STRIP_HALF_W + 0.4, 0.12, STRIP_Z0 + 0.45]} anchorX="left" textAlign="left" fontSize={0.3} color={MJC.cyan} />
     </group>
   );
 }
@@ -89,7 +89,6 @@ function DiodeWall() {
       </mesh>
       <mesh position={[WALL_X, WALL.height / 2, WALL.z1 - frontLen / 2]} material={m.wall}>
         <boxGeometry args={[WALL.thickness, WALL.height, frontLen]} />
-        <Edges color={MJC.red} threshold={15} />
       </mesh>
       <mesh position={[WALL_X, (doorTop + WALL.height) / 2, GATE[2]]} material={m.wall}>
         <boxGeometry args={[WALL.thickness, WALL.height - doorTop, doorHalf * 2]} />

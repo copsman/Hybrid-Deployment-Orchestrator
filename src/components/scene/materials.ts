@@ -10,7 +10,7 @@ import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import type { EnvId } from "@/engine";
 import { MJC, ZONE_TINT, type Tone } from "@/lib/palette";
-import { CHUNK_SIZE, MODULE, RING_R, TOWER, moduleLocal } from "./layout";
+import { CHUNK_SIZE, MODULE, PAD, RING_R, TOWER, moduleLocal } from "./layout";
 
 export interface SceneMaterials {
   pad: THREE.MeshStandardMaterial;
@@ -30,8 +30,8 @@ export interface SceneMaterials {
 export interface SceneGeometries {
   unitBox: THREE.BoxGeometry;
   module: RoundedBoxGeometry;
-  /** outline of the nine low modules of one campus, merged into a single line segment set */
-  moduleEdges: THREE.BufferGeometry;
+  /** outlines of the pad, the nine low modules and the tower of one campus, merged into one line segment set */
+  campusEdges: THREE.BufferGeometry;
   tower: THREE.BoxGeometry;
   led: THREE.SphereGeometry;
   pod: THREE.CylinderGeometry;
@@ -79,18 +79,24 @@ export function materials(): SceneMaterials {
   return materialCache;
 }
 
-function moduleEdges(): THREE.BufferGeometry {
-  const box = new THREE.BoxGeometry(MODULE.size, MODULE.h, MODULE.size);
+function pushEdges(all: number[], w: number, h: number, d: number, x: number, y: number, z: number) {
+  const box = new THREE.BoxGeometry(w, h, d);
   const edges = new THREE.EdgesGeometry(box);
   const single = edges.attributes.position.array;
-  const all: number[] = [];
-  for (let i = 0; i < MODULE.cols * MODULE.rowZ.length; i++) {
-    if (i === TOWER.index) continue;
-    const [x, y, z] = moduleLocal(i);
-    for (let j = 0; j < single.length; j += 3) all.push(single[j] + x, single[j + 1] + y, single[j + 2] + z);
-  }
+  for (let j = 0; j < single.length; j += 3) all.push(single[j] + x, single[j + 1] + y, single[j + 2] + z);
   box.dispose();
   edges.dispose();
+}
+
+/** One line set per campus instead of three drei Edges objects: pad, nine modules, tower. */
+function campusEdges(): THREE.BufferGeometry {
+  const all: number[] = [];
+  pushEdges(all, PAD.w, PAD.h, PAD.d, 0, PAD.h / 2, 0);
+  for (let i = 0; i < MODULE.cols * MODULE.rowZ.length; i++) {
+    const [x, y, z] = moduleLocal(i);
+    if (i === TOWER.index) pushEdges(all, MODULE.size, TOWER.h, MODULE.size, x, y, z);
+    else pushEdges(all, MODULE.size, MODULE.h, MODULE.size, x, y, z);
+  }
   const out = new THREE.BufferGeometry();
   out.setAttribute("position", new THREE.Float32BufferAttribute(all, 3));
   return out;
@@ -101,7 +107,7 @@ export function geometries(): SceneGeometries {
   geometryCache = {
     unitBox: new THREE.BoxGeometry(1, 1, 1),
     module: new RoundedBoxGeometry(1, 0.6, 1, 2, 0.08),
-    moduleEdges: moduleEdges(),
+    campusEdges: campusEdges(),
     tower: new THREE.BoxGeometry(1, 1.9, 1),
     led: new THREE.SphereGeometry(0.09, 10, 10),
     pod: new THREE.CylinderGeometry(0.18, 0.18, 0.5, 12),

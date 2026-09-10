@@ -128,6 +128,11 @@ export function diodeCounter(diode: { sent: number; total: number; bounces: numb
   return `${diode.sent}/${diode.total} CHUNKS · ${diode.bounces} RETURN ${diode.bounces === 1 ? "ATTEMPT" : "ATTEMPTS"} BLOCKED`;
 }
 
+/** Bundle staged in the low-side outbox; the engine emits no diode signal until the first chunk is sent. */
+export function stagedCounter(total: number): string {
+  return `${total} CHUNKS STAGED · LOW SIDE`;
+}
+
 export type ConsoleStatus = "approved" | "awaiting" | "standby";
 
 export function consoleLabel(operator: string | undefined, index: number, status: ConsoleStatus): string {

@@ -10,12 +10,12 @@ export interface LoadingState {
 }
 
 /** Stepped checklist overlay (Aceternity "Multi Step Loader" style), driven by an explicit index. */
-export function MultiStepLoader({ loadingStates, value, loading, className, done = false, title }: { loadingStates: LoadingState[]; value: number; loading: boolean; className?: string; done?: boolean; title?: string }) {
+export function MultiStepLoader({ loadingStates, value, loading, className, cardClassName, done = false, title }: { loadingStates: LoadingState[]; value: number; loading: boolean; className?: string; cardClassName?: string; done?: boolean; title?: string }) {
   return (
     <AnimatePresence mode="wait">
       {loading && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className={cn("absolute inset-0 z-20 flex items-center justify-center bg-background/70 backdrop-blur-md", className)}>
-          <div className="relative w-[420px] max-w-[90%] rounded-md border border-border/80 bg-card/90 p-5 shadow-[0_0_60px_rgba(34,211,238,0.12)]">
+          <div className={cn("relative w-[420px] max-w-[90%] rounded-md border border-border/80 bg-card/90 p-5 shadow-[0_0_60px_rgba(34,211,238,0.12)]", cardClassName)}>
             {title && <div className="hud-label mb-3 text-mjc-cyan">{title}</div>}
             <div className="flex flex-col gap-2">
               {loadingStates.map((s, i) => {

@@ -192,7 +192,9 @@ export const useOrchestrator = create<OrchestratorState>()((set, get) => {
 
     submit: (raw, source = "operator") => {
       const r = get().engine.submit(raw);
-      if (!r.ok) log("error", `${source}: submission rejected · ${r.errors.join(" · ")}`);
+      // Worded so the event log never repeats the toast title ("Submission rejected"): the
+      // browser smoke test locates that toast by text and must find exactly one element.
+      if (!r.ok) log("error", `${source}: rejected by the schema · ${r.errors.join(" · ")}`);
       refresh();
       return r;
     },

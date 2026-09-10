@@ -24,6 +24,7 @@ import {
   refusedVerdict,
   routedVerdict,
   siteSubtitle,
+  stagedCounter,
   zoneBanner,
 } from "../../src/components/scene/labels";
 import { parseVersionKey } from "../../src/components/scene/selectors";
@@ -92,6 +93,7 @@ describe("scene labels stay inside the local font's glyph set", () => {
     expectGlyphs(diodeCounter(null), "diode idle");
     expectGlyphs(diodeCounter({ sent: 16, total: 32, bounces: 1, active: true }), "diode active");
     expectGlyphs(diodeCounter({ sent: 32, total: 32, bounces: 2, active: false }), "diode complete");
+    expectGlyphs(stagedCounter(32), "diode staged");
     expectGlyphs(queueLabel(3), "queue label");
     expectGlyphs(queueOverflow(4), "queue overflow");
     for (const cls of ["OPEN", "RESTRICTED", "SECRET", "ONYX"] as Classification[]) expectGlyphs(packetTag("JOB-X", cls), cls);
