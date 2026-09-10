@@ -15,6 +15,7 @@ import {
   OBELISK,
   OUTBOX,
   PAD,
+  PLAQUE,
   PLAQUE_LOCAL,
   PROXY_X,
   QUARANTINE,
@@ -93,7 +94,7 @@ describe("scene layout: linear security gradient", () => {
         const q = queueSlot(id, k);
         expect(inside({ x: q[0], z: q[2] }, zone, 0.15), `${id} queue token ${k}`).toBe(true);
       }
-      expect(inside({ x: sx + PLAQUE_LOCAL[0], z: sz + PLAQUE_LOCAL[2] }, zone, 0.8), `${id} plaque`).toBe(true);
+      expect(inside({ x: sx + PLAQUE_LOCAL[0], z: sz + PLAQUE_LOCAL[2] }, zone, PLAQUE.w / 2), `${id} plaque`).toBe(true);
     }
   });
 

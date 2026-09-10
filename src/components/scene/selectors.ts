@@ -53,6 +53,19 @@ export const selQueueKey: Record<EnvId, (s: S) => string> = byId((id) => (s) => 
   return out;
 });
 
+export interface QueueEntry {
+  jobId: string;
+  classification: Classification;
+}
+
+export function parseQueueKey(key: string): QueueEntry[] {
+  if (!key) return [];
+  return key.split(",").map((part) => {
+    const i = part.lastIndexOf(":");
+    return { jobId: part.slice(0, i), classification: (part.slice(i + 1) || "OPEN") as Classification };
+  });
+}
+
 export type VersionPresence = "loaded" | "present" | "inflight" | "rejected" | "absent";
 
 const IN_FLIGHT: ReadonlySet<ArtefactState> = new Set<ArtefactState>(["STAGED", "IN_DIODE", "QUARANTINE", "VERIFYING"]);

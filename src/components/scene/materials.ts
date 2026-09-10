@@ -10,11 +10,12 @@ import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import type { EnvId } from "@/engine";
 import { MJC, ZONE_TINT, type Tone } from "@/lib/palette";
-import { CHUNK_SIZE, RING_R } from "./layout";
+import { CHUNK_SIZE, MODULE, RING_R, TOWER, moduleLocal } from "./layout";
 
 export interface SceneMaterials {
   pad: THREE.MeshStandardMaterial;
   body: THREE.MeshStandardMaterial;
+  module: THREE.MeshStandardMaterial;
   plate: Record<EnvId, THREE.MeshStandardMaterial>;
   strip: THREE.MeshStandardMaterial;
   accent: Record<Tone, THREE.MeshStandardMaterial>;
@@ -29,6 +30,8 @@ export interface SceneMaterials {
 export interface SceneGeometries {
   unitBox: THREE.BoxGeometry;
   module: RoundedBoxGeometry;
+  /** outline of the nine low modules of one campus, merged into a single line segment set */
+  moduleEdges: THREE.BufferGeometry;
   tower: THREE.BoxGeometry;
   led: THREE.SphereGeometry;
   pod: THREE.CylinderGeometry;
@@ -58,6 +61,7 @@ export function materials(): SceneMaterials {
   materialCache = {
     pad: standard({ color: MJC.card, metalness: 0.6, roughness: 0.45 }),
     body: standard({ color: "#0d1420", metalness: 0.55, roughness: 0.5 }),
+    module: standard({ color: "#151f2e", metalness: 0.5, roughness: 0.5 }),
     plate: {
       cloud: standard({ color: ZONE_TINT.cloud, metalness: 0.3, roughness: 0.8 }),
       onprem: standard({ color: ZONE_TINT.onprem, metalness: 0.3, roughness: 0.8 }),
@@ -75,18 +79,37 @@ export function materials(): SceneMaterials {
   return materialCache;
 }
 
+function moduleEdges(): THREE.BufferGeometry {
+  const box = new THREE.BoxGeometry(MODULE.size, MODULE.h, MODULE.size);
+  const edges = new THREE.EdgesGeometry(box);
+  const single = edges.attributes.position.array;
+  const all: number[] = [];
+  for (let i = 0; i < MODULE.cols * MODULE.rowZ.length; i++) {
+    if (i === TOWER.index) continue;
+    const [x, y, z] = moduleLocal(i);
+    for (let j = 0; j < single.length; j += 3) all.push(single[j] + x, single[j + 1] + y, single[j + 2] + z);
+  }
+  box.dispose();
+  edges.dispose();
+  const out = new THREE.BufferGeometry();
+  out.setAttribute("position", new THREE.Float32BufferAttribute(all, 3));
+  return out;
+}
+
 export function geometries(): SceneGeometries {
   if (geometryCache) return geometryCache;
   geometryCache = {
     unitBox: new THREE.BoxGeometry(1, 1, 1),
     module: new RoundedBoxGeometry(1, 0.6, 1, 2, 0.08),
+    moduleEdges: moduleEdges(),
     tower: new THREE.BoxGeometry(1, 1.9, 1),
     led: new THREE.SphereGeometry(0.09, 10, 10),
     pod: new THREE.CylinderGeometry(0.18, 0.18, 0.5, 12),
     token: new THREE.BoxGeometry(0.3, 0.3, 0.3),
     chunk: new THREE.BoxGeometry(CHUNK_SIZE[0], CHUNK_SIZE[1], CHUNK_SIZE[2]),
     link: new THREE.TorusGeometry(0.28, 0.015, 4, 24),
-    ring: new THREE.TorusGeometry(RING_R, 0.02, 6, 96),
+    // a 300° arc: the gap makes the busy spin visible, a full torus would look static
+    ring: new THREE.TorusGeometry(RING_R, 0.02, 6, 96, Math.PI * 1.65),
   };
   return geometryCache;
 }

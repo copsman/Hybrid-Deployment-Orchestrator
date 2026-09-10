@@ -68,7 +68,8 @@ export const QUEUE_Z = 2.2;
 export const PLAQUE_Z = 1.5;
 /** local x of the plaque centre and the queue row (runs toward -x, away from the outbox) */
 export const PLAQUE_LOCAL: V3 = [-2.4, 0.42, PLAQUE_Z - SITE.onprem[2]];
-export const QUEUE_LOCAL = { x0: -0.7, pitch: 0.45, z: QUEUE_Z - SITE.onprem[2], visible: 5 } as const;
+export const PLAQUE = { w: 2.1, h: 0.5, d: 0.06 } as const;
+export const QUEUE_LOCAL = { x0: -0.7, pitch: 0.45, z: QUEUE_Z - SITE.onprem[2], y: 0.2, visible: 5 } as const;
 
 /** Centre of stack module i (0 … 9) in site-local coordinates; the tower (i = 2) is taller. */
 export function moduleLocal(i: number): V3 {
@@ -83,7 +84,7 @@ export function siteGate(id: EnvId): V3 {
 }
 
 export function queueSlot(id: EnvId, k: number): V3 {
-  return [ZONE_CX[id] + QUEUE_LOCAL.x0 - k * QUEUE_LOCAL.pitch, 0.15, QUEUE_Z];
+  return [ZONE_CX[id] + QUEUE_LOCAL.x0 - k * QUEUE_LOCAL.pitch, QUEUE_LOCAL.y, QUEUE_Z];
 }
 
 /* ------------------------------------------------------------------ diode assembly */
