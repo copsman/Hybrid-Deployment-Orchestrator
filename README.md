@@ -28,13 +28,25 @@ A **policy router** takes each job, evaluates a declarative, deny-by-default rul
   <img src="docs/screenshots/scenario-complete.png" alt="Control room after the scenario: three jobs routed, three refused" width="100%" />
 </p>
 <p align="center">
-  <img src="docs/screenshots/diode-transfer.png" alt="One-way diode transfer with a blocked return attempt" width="49%" />
+  <img src="docs/screenshots/diode-transfer.png" alt="One-way diode transfer: chunks crossing the wall through the gate, the return attempt blocked" width="49%" />
   <img src="docs/screenshots/import-ceremony.png" alt="Two-person import ceremony inside the enclave" width="49%" />
 </p>
 <p align="center">
   <img src="docs/screenshots/decision-trace.png" alt="Decision record with the full rule trace" width="49%" />
   <img src="docs/screenshots/deployments.png" alt="Same model, three stacks, digest parity" width="49%" />
 </p>
+
+---
+
+## Ninety-second walkthrough
+
+<p align="center">
+  <a href="docs/walkthrough/meridian-vantage-walkthrough.webm">
+    <img src="docs/walkthrough/meridian-vantage-walkthrough.png" alt="Poster of the recorded walkthrough: the control room at SCENARIO COMPLETE. Click to open the video." width="100%" />
+  </a>
+</p>
+
+[`docs/walkthrough/meridian-vantage-walkthrough.webm`](docs/walkthrough/meridian-vantage-walkthrough.webm) (VP8, about 11 MiB, about 90 seconds, silent) is one uncut run of the director in the jury view at 2× speed: the opener, six jobs through the policy router, the 1.4.0 bundle crossing the diode with the return attempt bouncing off the gate, the two-person import ceremony, digest parity and the ledger verification. GitHub plays it in the file viewer; click the poster above, or download the file. It is re-recorded from a production build with `npm run walkthrough` (Playwright's Chromium, headless; `WALKTHROUGH_HEADED=1 npm run walkthrough` renders on the machine's GPU), which also refreshes the six screenshots in `docs/screenshots/` from the same run.
 
 ---
 
@@ -47,11 +59,11 @@ npm ci            # exact, locked dependencies
 npm run dev       # control room on http://localhost:3000
 ```
 
-Press **PLAY SCENARIO** in the top bar (or **PLAY THE SCENARIO** on the intro screen). The director resets the sandbox, submits the jobs, refuses the ones policy forbids, ships version 1.4.0 through the diode, and finishes with a ledger verification. Press it again for an identical second run. Useful URL switches: `?intro=0` skips the opener, `?speed=4` runs the director four times faster, and the **2D** toggle swaps the 3D scene for the SVG map. Press `?` for the presenter keys.
+Press **PLAY SCENARIO** in the top bar (or **PLAY THE SCENARIO** on the intro screen). The director resets the sandbox, submits the jobs, refuses the ones policy forbids, ships version 1.4.0 through the diode, and finishes with a ledger verification. Press it again for an identical second run. Useful URL switches: `?intro=0` skips the opener, `?speed=4` runs the director four times faster, `?jury=1` opens the jury view, and the **2D** toggle (or `M`) swaps the 3D scene for the SVG map. Press `?` for the presenter keys.
 
 ### Presenter keys
 
-The whole story can be driven from the keyboard; the rail in the top bar shows the step counter and one colour-coded segment per scenario step. Keys are ignored while typing in a field and while the opener is on screen.
+The whole story can be driven from the keyboard; the rail in the top bar shows the step counter and one colour-coded segment per scenario step. Keys are ignored while typing in a field, inside a dialog, and while the opener is on screen.
 
 | Key | Action |
 |---|---|
@@ -78,7 +90,8 @@ npm run demo             # runs the full scenario in Node and prints decisions, 
 npm run demo -- --json   # machine-readable
 npm test                 # unit + property-based tests (vitest + fast-check)
 npm run verify           # typecheck + lint + test + demo + production build
-npm run e2e              # Playwright smoke test against a production build (needs `npx playwright install chromium` once)
+npm run e2e              # Playwright (smoke, presenter, jury) against a production build (needs `npx playwright install chromium` once)
+npm run walkthrough      # record the ninety-second video + poster and refresh docs/screenshots from a production build
 ```
 
 Production build and Vercel: `npm run build && npm start`. The project deploys to Vercel with the default Next.js preset and no environment variables.
@@ -101,6 +114,14 @@ Three classifications land in three environments, three requests are refused wit
 
 ---
 
+## The scene
+
+The 3D control room is a **linear security gradient**, read left to right by trust: PERIMETER 01 CLOUD, the inspection proxy, PERIMETER 02 SOVEREIGN (on-prem), the data-diode wall, PERIMETER 03 ENCLAVE. In front of the three plates runs the **policy plane**: the build-and-sign bench on the low side, the policy router as the single entry point, the ledger obelisk, and one barrier arch that every route passes before fanning out to a perimeter. The air-gapped route is the only geometry that crosses the wall, and it does so through the diode gate. Each perimeter carries the same generic campus with the same ten-layer stack (app, AI gateway, model serving, database, identity, registry, secrets, observability, updates, network); only the enclosure differs: an open pad with an uplink mast, a fenced yard behind the proxy checkpoint, bunker walls under a glass canopy with a crossed-out mast.
+
+Everything that moves is read from the engine snapshot, nothing is scripted for the camera. GPU slot LEDs on the on-prem and enclave towers and elastic pods on the cloud apron light per running job; queue tokens, coloured by classification, line up at a full site's gate; version plaques read `SCRIBE 1.3.0 · 1.4.0`, `1.4.0 PENDING` or `1.4.0 REJECTED`; the router headline counts decisions against the real policy version and the barrier flashes `REFUSED · POL-01` or pulses `JOB-B → ONPREM` as each packet arrives; the signed bundle token travels bench → cloud registry → proxy → on-prem registry → outbox and reappears in the enclave registry once imported; the diode conveyor carries the real 32 chunks over the gate under a live counter (`18/32 CHUNKS · 1 RETURN ATTEMPT BLOCKED`), a scanner sweeps the quarantine tray and two operator consoles turn green per approval; the obelisk gains a link per ledger entry and reads `CHAIN INTACT` or `CHAIN BROKEN`. Every label is in-world text set in a locally served Geist Mono, so the scene never touches the network. The 2D map (`M`) is the same drawing in SVG, with the same counters, LEDs, plaques and verdicts.
+
+---
+
 ## What is in the box
 
 ```
@@ -114,11 +135,18 @@ src/engine/                 pure TypeScript, no React — runs in the browser, i
   ledger.ts                 hash-chained decision ledger + verifier
   index.ts                  Engine: environments, jobs, artefact pipeline state machine, diode, import, parity
   scenario.ts / whatif.ts   the director script; counterfactual explanations for refused jobs
-src/store/                  zustand stores: engine snapshot, event log, packets for the scene, the director
-src/components/scene/       react-three-fiber scene (sites, packets, diode gate, camera rig) + 2D SVG fallback
-src/components/control-room Jobs, Decision trace, Deployments (stack matrix + parity), Pipeline, Ledger, Policy, What-if
-scripts/demo.ts             headless run of the scenario
-tests/                      vitest unit tests, fast-check invariants, Playwright smoke test
+src/store/                  zustand stores: engine snapshot, event log, packets for the scene, the director (presenter state, jury flag)
+src/lib/                    palette.ts (scene colours, local font, glyph set), sfx.ts + sfx-bindings.ts (WebAudio kit driven by the stores)
+src/components/scene/       react-three-fiber scene: layout.ts (gradient geometry, routes, camera presets), Zones, Site, Hub, Routes, Packets,
+                            Ledger, DiodeGate, ArtefactFlow, CameraRig, SceneText, materials, selectors.ts (string-key selectors), labels.ts
+src/components/scene/map2d  the 2D SVG mirror: geometry, Campus, Diode, PolicyPlane, Packets, Artefact (composed by Fallback2D.tsx)
+src/components/control-room Jobs, Decision trace, Deployments (stack matrix + parity), Pipeline, Ledger, Policy, What-if,
+                            Hotkeys, PresenterRail, ShortcutLegend, ImportCeremony
+public/fonts/               GeistMono-Regular.ttf + its OFL licence, the only asset the scene loads
+scripts/                    demo.ts (headless run), record-walkthrough.mjs (video + screenshots), build-submission.mjs (PDF)
+tests/engine/               vitest unit tests and fast-check invariants
+tests/scene/                layout invariants (zones, wall, routes, trays, camera) and glyph coverage of every label
+tests/e2e/                  Playwright: smoke (×2), presenter keys, jury view
 ```
 
 ### Policy as data
@@ -157,14 +185,15 @@ A dry run of the policy plus single-attribute counterfactuals: "drop the live re
 
 ## Testing and reproducibility
 
-- `npm test`: 40 tests. Property-based invariants (fast-check) include: SECRET never lands on cloud or on-prem, ONYX is always refused, jobs needing external retrieval never land in the enclave, personal data never lands in cloud, every decision has a rule id and a justification, the ledger detects tampering at any position, a flipped byte or a wrong signer is always rejected, the input schema never throws on arbitrary JSON, and two fresh runs produce identical ledgers.
+- `npm test`: 56 tests. Property-based invariants (fast-check) include: SECRET never lands on cloud or on-prem, ONYX is always refused, jobs needing external retrieval never land in the enclave, personal data never lands in cloud, every decision has a rule id and a justification, the ledger detects tampering at any position, a flipped byte or a wrong signer is always rejected, the input schema never throws on arbitrary JSON, and two fresh runs produce identical ledgers.
+- The scene tests (`tests/scene/`) pin the picture to the story: the three perimeter plates and the policy strip are disjoint and ordered by trust, the proxy and the wall sit in the gaps, every campus part stays inside its zone, every route passes the barrier arch, only the air-gapped route crosses the wall and only through the gate aperture, all 32 chunk slots sit in their trays, the same ten-layer stack maps onto the module grid in every environment, there is one camera preset per focus, and the solved overview fits the whole gradient and clears the caption box at five frame shapes. A second file proves that every label, template and engine-supplied string (site and stack names, job ids, rule ids, operator names, versions, hashes) uses only glyphs the local font has, so the scene can never trigger a font download.
 - `npm run demo` runs the same scenario headless and exits non-zero if any step fails or the ledger does not verify. CI runs it twice and diffs the results.
-- `npm run e2e` drives the real UI in Chromium: plays the scenario to "SCENARIO COMPLETE", checks where each job landed, breaks and restores the ledger, submits garbage JSON, and resets.
+- `npm run e2e` drives the real UI in Chromium, four tests in three specs: the smoke spec plays the scenario to "SCENARIO COMPLETE", checks where each job landed, breaks and restores the ledger, then submits garbage JSON and resets; the presenter spec drives the director from the keyboard and proves the keys stay quiet while typing; the jury spec proves `?jury=1` hides every manual control, follows the story through the tabs, and that `J` restores the operator page. All four assert zero page errors.
 - Reset restores the seed: a second run in the same tab reproduces the first, hash for hash.
 
 ## Accessibility and fallbacks
 
-The 3D scene is decoration. The **2D** switch in the top bar (or `prefers-reduced-motion`) swaps it for an SVG map with the same packets and diode animation, and the control room falls back to the map automatically if WebGL is unavailable or the scene fails to render. Sound is off by default; the speaker button (or `S`) turns on a synthesised WebAudio kit with no audio assets: a quiet ambient bed while the director plays, a distinct two-note motif per marking when a job is routed, a buzzer for every refusal, rising ticks for the diode chunks with a thud for the blocked return path, two approval stamps, a chord when the bundle is verified, a tick per ledger link, a chime when the chain verifies and a sting at the end. Muting is instant and nothing is queued while sound is off.
+The 3D scene is decoration. The **2D** switch in the top bar (or `M`, or `prefers-reduced-motion`) swaps it for an SVG map with the same left-to-right organisation, packets, chunk counter, LEDs, plaques and verdicts, and the control room falls back to the map automatically if WebGL is unavailable or the scene fails to render. Under reduced motion the map keeps the state-driven flights and stops its decorative loops. Sound is off by default; the speaker button (or `S`) turns on a synthesised WebAudio kit with no audio assets: a quiet ambient bed while the director plays, a distinct two-note motif per marking when a job is routed, a buzzer for every refusal, rising ticks for the diode chunks with a thud for the blocked return path, two approval stamps, a chord when the bundle is verified, a tick per ledger link, a chime when the chain verifies and a sting at the end. Muting is instant and nothing is queued while sound is off.
 
 ## Mapping to real tooling
 

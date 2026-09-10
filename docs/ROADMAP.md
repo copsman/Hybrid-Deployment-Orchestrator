@@ -48,9 +48,12 @@ Status legend: **now** = next sprint after the hackathon, **next** = one to thre
 ## 6. Demo and presentation polish (now)
 
 - Vercel deployment URL in the README and on the title page of the submission (`SUBMISSION_LIVE_URL=... npm run submission`).
-- A ninety-second recorded walkthrough of director mode for judges who cannot run the app.
-- Keyboard-driven presenter mode (space to advance, arrows for camera presets) and a "jury view" that hides the manual controls.
-- Optional narration audio synced to the captions.
+- ~~A ninety-second recorded walkthrough of director mode for judges who cannot run the app.~~ Done 2026-09-10: `docs/walkthrough/meridian-vantage-walkthrough.webm`, re-recorded with `npm run walkthrough`.
+- ~~Keyboard-driven presenter mode (space to advance, arrows for camera presets) and a "jury view" that hides the manual controls.~~ Done 2026-09-10: `?` lists the keys, `?jury=1` or `J` opens the jury view.
+- ~~Richer sound design.~~ Done 2026-09-10: a synthesised WebAudio kit with an ambient bed, no audio assets.
+- ~~A more organised, more detailed 3D scene and 2D map.~~ Done 2026-09-10: the linear security gradient with state-driven details, mirrored in SVG.
+- Optional narration audio synced to the captions (a separate layer on top of the sound kit; the recording has no audio track).
+- Presenter follow-ups from the design review, not done: hide the upright zone banners at the close camera presets where they fill the frame, and a key-hint strip on the presenter rail when the top bar is wide enough.
 
 ## Non-goals
 
