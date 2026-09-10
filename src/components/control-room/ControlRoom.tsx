@@ -22,8 +22,7 @@ import { ImportCeremony } from "./ImportCeremony";
 import { Hotkeys } from "./Hotkeys";
 import { ShortcutLegend } from "./ShortcutLegend";
 import { useDirector, hydrateDirectorPrefs } from "@/store/director";
-import { useOrchestrator } from "@/store/orchestrator";
-import { sfx } from "@/lib/sfx";
+import { bindSfx } from "@/lib/sfx-bindings";
 import { cn } from "@/lib/utils";
 
 const TABS = [
@@ -90,39 +89,8 @@ export function ControlRoom() {
     });
   }, [selectTab]);
 
-  // Sound hooks: react to store changes, never to raw engine events, so muting is instant.
-  useEffect(() => {
-    let lastPackets = 0;
-    let lastSent = -1;
-    let lastBounces = 0;
-    return useOrchestrator.subscribe((s) => {
-      if (!useDirector.getState().soundOn) {
-        lastPackets = s.packets.length;
-        lastSent = s.diode?.sent ?? -1;
-        lastBounces = s.diode?.bounces ?? 0;
-        return;
-      }
-      if (s.packets.length > lastPackets) {
-        const p = s.packets[s.packets.length - 1];
-        if (p.to) sfx.route();
-        else sfx.refuse();
-      }
-      lastPackets = s.packets.length;
-      if (s.diode && s.diode.sent !== lastSent && s.diode.active) sfx.chunk();
-      lastSent = s.diode?.sent ?? -1;
-      if (s.diode && s.diode.bounces > lastBounces) sfx.bounce();
-      lastBounces = s.diode?.bounces ?? 0;
-    });
-  }, []);
-
-  useEffect(() => {
-    const engine = useOrchestrator.getState().engine;
-    return engine.subscribe((e) => {
-      if (!useDirector.getState().soundOn) return;
-      if (e.type === "artefact.state" && e.state === "LOADED") sfx.verified();
-      if (e.type === "artefact.state" && e.state === "REJECTED") sfx.refuse();
-    });
-  }, []);
+  // Sound: store-driven bindings (never raw engine events), so muting is instant.
+  useEffect(() => bindSfx(), []);
 
   // Everything the jury switch changes derives from this one read, so the layout flips in a single paint.
   const tabs = jury ? TABS.filter((t) => t.id !== "whatif") : TABS;

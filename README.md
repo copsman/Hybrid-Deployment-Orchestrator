@@ -164,7 +164,7 @@ A dry run of the policy plus single-attribute counterfactuals: "drop the live re
 
 ## Accessibility and fallbacks
 
-The 3D scene is decoration. The **2D** switch in the top bar (or `prefers-reduced-motion`) swaps it for an SVG map with the same packets and diode animation, and the control room falls back to the map automatically if WebGL is unavailable or the scene fails to render. Sound is off by default.
+The 3D scene is decoration. The **2D** switch in the top bar (or `prefers-reduced-motion`) swaps it for an SVG map with the same packets and diode animation, and the control room falls back to the map automatically if WebGL is unavailable or the scene fails to render. Sound is off by default; the speaker button (or `S`) turns on a synthesised WebAudio kit with no audio assets: a quiet ambient bed while the director plays, a distinct two-note motif per marking when a job is routed, a buzzer for every refusal, rising ticks for the diode chunks with a thud for the blocked return path, two approval stamps, a chord when the bundle is verified, a tick per ledger link, a chime when the chain verifies and a sting at the end. Muting is instant and nothing is queued while sound is off.
 
 ## Mapping to real tooling
 

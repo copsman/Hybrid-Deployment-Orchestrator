@@ -30,7 +30,9 @@ export function SubmitJobForm() {
   const onSubmit = (input: unknown) => {
     const r = submit(input, mode === "raw" ? "raw-json" : "operator");
     if (!r.ok) {
-      toast.error("Submission rejected", { description: r.errors.slice(0, 4).join("\n") });
+      // The event log already says "<source>: submission rejected · …"; a different title here keeps
+      // the two messages distinguishable on screen and by text locators.
+      toast.error("Invalid submission", { description: r.errors.slice(0, 4).join("\n") });
       return;
     }
     const v = r.decision.verdict;
