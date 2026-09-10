@@ -7,7 +7,9 @@ import { MJC } from "@/lib/palette";
 import { CAMERA_FOV, CAMERA_PRESETS } from "./layout";
 import { CameraRig } from "./CameraRig";
 import { Zones } from "./Zones";
-import { Barrier, Hub, Routes } from "./Sites";
+import { Routes } from "./Routes";
+import { Barrier, Bench, Hub } from "./Hub";
+import { Ledger } from "./Ledger";
 import { Site } from "./Site";
 import { DiodeGate } from "./DiodeGate";
 import { Packets } from "./Packets";
@@ -38,7 +40,9 @@ export function Scene() {
         <Zones />
         <Routes />
         <Hub />
+        <Bench />
         <Barrier />
+        <Ledger />
         <Site id="cloud" />
         <Site id="onprem" />
         <Site id="airgapped" />

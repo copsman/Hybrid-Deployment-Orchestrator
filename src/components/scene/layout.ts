@@ -48,8 +48,8 @@ export const STRIP_RECT: Rect = { x0: -STRIP_HALF_W, x1: STRIP_HALF_W, z0: STRIP
 export const HUB: V3 = [0, 0, 7.3];
 /** policy barrier arch: the single exit from the policy plane, in the corridor z 3.5 … 5.0 */
 export const ARCH: V3 = [0, 0, 4.25];
-export const BENCH: V3 = [-3.4, 0, 8.0];
-export const OBELISK: V3 = [3.4, 0, 8.0];
+export const BENCH: V3 = [-5.0, 0, 8.0];
+export const OBELISK: V3 = [5.0, 0, 8.0];
 
 /* ------------------------------------------------------------------ campuses (same footprint everywhere) */
 export const SITE: Record<EnvId, V3> = {
@@ -158,6 +158,9 @@ export const CHANNEL = {
   import: new THREE.QuadraticBezierCurve3(v(...STOPS.quarantine), v(7.4, 1.8, 0.2), v(...STOPS.enclaveRegistry)),
 };
 
+/** Packet flight timings in seconds: routed hub → gate, refused hub → arch, and the burst after a refusal. */
+export const PACKET_TIMING = { route: 3.0, refuse: 1.4, burst: 0.7 } as const;
+
 /* ------------------------------------------------------------------ camera */
 export const CAMERA_FOV = 40;
 /** Height of the caption box drawn over the bottom of the scene frame while the director plays. */
@@ -178,7 +181,7 @@ const OVERVIEW_FIT: V3[] = [
 /** Points that must clear the caption box (the hub and ledger headlines). */
 const OVERVIEW_CLEAR: V3[] = [
   [HUB[0], 2.4, HUB[2]],
-  [OBELISK[0], 3.5, OBELISK[2]],
+  [OBELISK[0], 4.6, OBELISK[2]],
 ];
 const FIT_MARGIN = 0.94;
 
@@ -237,7 +240,7 @@ export const DEFAULT_FRAME = { width: 820, height: 560 } as const;
 
 export const CAMERA_PRESETS: Record<Focus, { pos: V3; target: V3 }> = {
   overview: overviewPose(DEFAULT_FRAME.width / DEFAULT_FRAME.height, DEFAULT_FRAME.height),
-  hub: { pos: [0, 6.5, 14.5], target: [0, 0.9, 6.4] },
+  hub: { pos: [0, 10.2, 15.2], target: [0, 0.9, 6.0] },
   cloud: { pos: [-15.5, 7.5, 8], target: [-10.3, 0.7, -1.2] },
   onprem: { pos: [-4.5, 7.5, 9], target: [0.2, 0.7, -1.2] },
   diode: { pos: [2.0, 7.0, 10], target: [5.6, 0.8, 1.8] },

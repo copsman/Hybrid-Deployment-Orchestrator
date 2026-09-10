@@ -24,6 +24,7 @@ function rectPoints(x0: number, x1: number, z0: number, z1: number, y: number): 
 
 function ZonePlate({ id }: { id: EnvId }) {
   const spec = useOrchestrator(selSpec[id]);
+  const focus = useDirector((s) => s.focus);
   const m = materials();
   const cx = ZONE_CX[id];
   const accent = ENV_ACCENT[id];
@@ -36,8 +37,8 @@ function ZonePlate({ id }: { id: EnvId }) {
       <Line points={border} color={accent} transparent opacity={0.5} lineWidth={1.2} dashed dashSize={0.6} gapSize={0.3} />
       {/* upright banner along the back edge, faces the camera */}
       <SceneText text={zoneBanner(id, spec.network)} position={[cx - 4.5, 1.9, ZONE_Z0 + 0.2]} anchorX="left" textAlign="left" fontSize={0.66} letterSpacing={0.05} lineHeight={1.25} color={accent} outlineWidth={0.03} />
-      {/* trust marking engraved on the front-left corner of the plate */}
-      <SceneText flat text={TRUST_MARK[id]} position={[cx - 4.4, 0.12, ZONE_Z1 - 0.25]} anchorX="left" textAlign="left" fontSize={0.22} color={MJC.mutedFg} outlineWidth={0.02} />
+      {/* trust marking engraved on the front-left corner of the plate, read at the focused preset */}
+      {focus === id && <SceneText flat text={TRUST_MARK[id]} position={[cx - 4.4, 0.12, ZONE_Z1 - 0.25]} anchorX="left" textAlign="left" fontSize={0.22} color={MJC.mutedFg} outlineWidth={0.02} />}
     </group>
   );
 }

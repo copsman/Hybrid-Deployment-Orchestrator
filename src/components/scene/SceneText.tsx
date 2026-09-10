@@ -13,6 +13,7 @@ import type { V3 } from "./layout";
 export interface SceneTextHandle extends THREE.Mesh {
   fillOpacity: number;
   text: string;
+  color: string | number;
 }
 
 export interface SceneTextProps {

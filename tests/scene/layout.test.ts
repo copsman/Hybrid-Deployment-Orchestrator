@@ -220,7 +220,7 @@ describe("scene layout: linear security gradient", () => {
       const captionTop = -1 + (2 * CAPTION_PX) / h;
       for (const c of [
         [HUB[0], 2.4, HUB[2]],
-        [OBELISK[0], 3.5, OBELISK[2]],
+        [OBELISK[0], 4.6, OBELISK[2]],
       ] as V3[]) {
         p.set(...c).project(cam);
         expect(p.y, `${w}x${h} headline ${c} clears the caption`).toBeGreaterThan(captionTop);
