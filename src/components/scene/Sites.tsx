@@ -7,7 +7,7 @@ import { Edges, Float, Html, Line } from "@react-three/drei";
 import { useOrchestrator } from "@/store/orchestrator";
 import { useDirector } from "@/store/director";
 import type { EnvId } from "@/engine";
-import { HUB, SITES, BARRIER, routeCurve, refusedCurve } from "./layout";
+import { HUB, SITE, ARCH, routeCurve, refusedCurve } from "./layout";
 import { selRunning, selSpec } from "./selectors";
 
 const CYAN = "#22d3ee";
@@ -101,12 +101,12 @@ export function Barrier() {
     }
   });
   return (
-    <group position={BARRIER}>
-      <mesh rotation={[0, Math.PI / 2, 0]}>
+    <group position={[ARCH[0], 0.85, ARCH[2]]}>
+      <mesh>
         <planeGeometry args={[2.6, 1.6]} />
         <meshStandardMaterial ref={mat} color={RED} emissive={RED} emissiveIntensity={0.4} transparent opacity={0.12} side={THREE.DoubleSide} depthWrite={false} />
       </mesh>
-      <mesh rotation={[0, Math.PI / 2, 0]}>
+      <mesh>
         <planeGeometry args={[2.6, 1.6]} />
         <meshBasicMaterial color={RED} wireframe transparent opacity={0.35} />
       </mesh>
@@ -126,7 +126,7 @@ export function CloudSite() {
     if (orbit.current) orbit.current.rotation.y += dt * (busy ? 1.6 : 0.5);
   });
   return (
-    <group position={SITES.cloud}>
+    <group position={SITE.cloud}>
       <Float speed={1.4} rotationIntensity={0.15} floatIntensity={0.6}>
         <mesh>
           <cylinderGeometry args={[1.5, 1.5, 0.18, 6]} />
@@ -153,11 +153,6 @@ export function CloudSite() {
           </mesh>
         </group>
       </Float>
-      {/* light shaft to the ground */}
-      <mesh position={[0, -SITES.cloud[1] / 2, 0]}>
-        <cylinderGeometry args={[0.25, 1.2, SITES.cloud[1], 24, 1, true]} />
-        <meshBasicMaterial color={CYAN} transparent opacity={0.06} side={THREE.DoubleSide} depthWrite={false} />
-      </mesh>
       <pointLight position={[0, 1.5, 0]} color={CYAN} intensity={busy ? 8 : 4} distance={9} />
       <group position={[0, 2.2, 0]}>
         <Label title="CLOUD" sub="Meridian Cloud Region North · elastic · external" active={focus === "cloud"} />
@@ -172,7 +167,7 @@ export function OnPremSite() {
   const focus = useDirector((s) => s.focus);
   const slots = spec.slots ?? 4;
   return (
-    <group position={SITES.onprem}>
+    <group position={SITE.onprem}>
       <mesh position={[0, 0.05, 0]}>
         <boxGeometry args={[4.4, 0.1, 3.2]} />
         <meshStandardMaterial color="#0a0f17" metalness={0.5} roughness={0.5} />
@@ -216,7 +211,7 @@ export function EnclaveSite() {
     if (ring.current) ring.current.rotation.z -= dt * 0.35;
   });
   return (
-    <group position={SITES.airgapped}>
+    <group position={SITE.airgapped}>
       <mesh position={[0, 0.05, 0]}>
         <cylinderGeometry args={[2.4, 2.6, 0.1, 8]} />
         <meshStandardMaterial color="#0a0f17" metalness={0.5} roughness={0.5} />

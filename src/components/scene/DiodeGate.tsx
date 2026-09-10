@@ -3,7 +3,7 @@
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
-import { Edges, Html } from "@react-three/drei";
+import { Html } from "@react-three/drei";
 import { useOrchestrator } from "@/store/orchestrator";
 import { useDirector } from "@/store/director";
 import { GATE, WALL_X } from "./layout";
@@ -12,8 +12,8 @@ const CYAN = "#22d3ee";
 const AMBER = "#f59e0b";
 const RED = "#f43f5e";
 const CHUNKS = 10;
-const LOW_X = WALL_X - 3.2;
-const HIGH_X = WALL_X + 3.2;
+const LOW_X = WALL_X - 1.6;
+const HIGH_X = WALL_X + 1.6;
 
 export function DiodeGate() {
   const diode = useOrchestrator((s) => s.diode);
@@ -82,12 +82,6 @@ export function DiodeGate() {
 
   return (
     <group>
-      {/* wall between the sovereign side and the enclave */}
-      <mesh position={[WALL_X, 0.9, 5.5]}>
-        <boxGeometry args={[0.18, 1.8, 6.4]} />
-        <meshStandardMaterial color="#1a0d12" emissive={RED} emissiveIntensity={0.25} transparent opacity={0.85} metalness={0.3} roughness={0.7} />
-        <Edges color={RED} threshold={15} />
-      </mesh>
       {/* gate ring + direction cone */}
       <mesh position={GATE} rotation={[0, Math.PI / 2, 0]}>
         <torusGeometry args={[0.7, 0.05, 10, 48]} />
