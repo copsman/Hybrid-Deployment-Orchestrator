@@ -38,9 +38,9 @@ describe("canonicalize", () => {
   it("is order-independent for any record (property)", () => {
     fc.assert(
       fc.property(fc.dictionary(fc.string(), jsonValue, { noNullPrototype: true }), (rec) => {
-        const keys = Object.keys(rec);
-        const shuffled: Record<string, unknown> = {};
-        for (const k of keys.slice().reverse()) shuffled[k] = rec[k];
+        // Object.fromEntries defines own data properties, so a generated "__proto__" key stays a key
+        // instead of hitting the prototype setter that plain `shuffled[k] = ...` assignment would trigger.
+        const shuffled = Object.fromEntries(Object.entries(rec).reverse());
         expect(canonicalize(shuffled)).toBe(canonicalize(rec));
       }),
       { numRuns: 200 },
