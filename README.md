@@ -47,7 +47,25 @@ npm ci            # exact, locked dependencies
 npm run dev       # control room on http://localhost:3000
 ```
 
-Press **PLAY SCENARIO** in the top bar (or **PLAY THE SCENARIO** on the intro screen). The director resets the sandbox, submits the jobs, refuses the ones policy forbids, ships version 1.4.0 through the diode, and finishes with a ledger verification. Press it again for an identical second run. Useful URL switches: `?intro=0` skips the opener, `?speed=4` runs the director four times faster, and the **2D** toggle swaps the 3D scene for the SVG map.
+Press **PLAY SCENARIO** in the top bar (or **PLAY THE SCENARIO** on the intro screen). The director resets the sandbox, submits the jobs, refuses the ones policy forbids, ships version 1.4.0 through the diode, and finishes with a ledger verification. Press it again for an identical second run. Useful URL switches: `?intro=0` skips the opener, `?speed=4` runs the director four times faster, and the **2D** toggle swaps the 3D scene for the SVG map. Press `?` for the presenter keys.
+
+### Presenter keys
+
+The whole story can be driven from the keyboard; the rail in the top bar shows the step counter and one colour-coded segment per scenario step. Keys are ignored while typing in a field and while the opener is on screen.
+
+| Key | Action |
+|---|---|
+| `SPACE` | play · pause · resume |
+| `N` or `→` | next step (during the diode transfer the remaining chunks are drained at once) |
+| `←` | re-centre the camera on the current step |
+| `1` `2` `3` `4` `5` `6` | overview · router · cloud · on-prem · diode · enclave |
+| `+` / `−` | faster / slower (0.5× 1× 2× 4×) |
+| `SHIFT+R` | reset the sandbox (same seed, identical second run); plain `R` only warns |
+| `S` | sound on / off |
+| `M` | 2D map / 3D scene |
+| `F` | fullscreen |
+| `J` | jury view (hides the manual controls) |
+| `?` | the legend; `ESC` closes it |
 
 Headless, no browser:
 

@@ -19,6 +19,8 @@ import { Captions } from "./Captions";
 import { AlertOverlay } from "./AlertOverlay";
 import { IntroOverlay } from "./IntroOverlay";
 import { ImportCeremony } from "./ImportCeremony";
+import { Hotkeys } from "./Hotkeys";
+import { ShortcutLegend } from "./ShortcutLegend";
 import { useDirector, hydrateDirectorPrefs } from "@/store/director";
 import { useOrchestrator } from "@/store/orchestrator";
 import { sfx } from "@/lib/sfx";
@@ -136,6 +138,8 @@ export function ControlRoom() {
         </main>
         <LogTicker />
         <IntroOverlay />
+        <Hotkeys />
+        <ShortcutLegend />
       </div>
     </TooltipProvider>
   );

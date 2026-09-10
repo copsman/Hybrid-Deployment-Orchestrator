@@ -7,9 +7,12 @@ import { useOrchestrator } from "./orchestrator";
 export type DirectorStatus = "idle" | "playing" | "paused" | "done";
 export type Speed = 0.5 | 1 | 2 | 4;
 
+/** Playback speeds in cycling order; shared by the top bar and the presenter hotkeys. */
+export const SPEEDS: Speed[] = [0.5, 1, 2, 4];
+
 export type CameraHandler = (focus: Focus, animate: boolean) => Promise<void> | void;
 
-interface DirectorState {
+export interface DirectorState {
   status: DirectorStatus;
   stepIndex: number;
   steps: ScenarioStep[];
@@ -21,6 +24,10 @@ interface DirectorState {
   soundOn: boolean;
   /** cinematic intro overlay; false during SSR, decided on the client */
   intro: boolean;
+  /** ?jury=1 or the J key: hides the manual controls for a presentation (not persisted) */
+  jury: boolean;
+  /** the presenter-keys legend dialog */
+  legendOpen: boolean;
   lastResult: StepResult | null;
   runId: number;
 
@@ -35,12 +42,20 @@ interface DirectorState {
   setFocus: (f: Focus) => void;
   registerCamera: (fn: CameraHandler | null) => void;
   dismissIntro: () => void;
+  setJury: (v: boolean) => void;
+  toggleJury: () => void;
+  setLegendOpen: (v: boolean) => void;
 }
 
 let camera: CameraHandler | null = null;
 let skipResolver: (() => void) | null = null;
 let pauseGate: Promise<void> | null = null;
 let pauseRelease: (() => void) | null = null;
+/**
+ * Set by next(): the rest of the current step's waits are skipped, so one press jumps to the
+ * next step. Consumed at the top of every loop iteration and cleared on stop() and completion.
+ */
+let skipRequested = false;
 
 function readPref(key: string, fallback: boolean): boolean {
   if (typeof window === "undefined") return fallback;
@@ -104,6 +119,8 @@ export const useDirector = create<DirectorState>()((set, get) => {
     reducedMotion: false,
     soundOn: false,
     intro: false,
+    jury: false,
+    legendOpen: false,
     lastResult: null,
     runId: 0,
 
@@ -119,9 +136,12 @@ export const useDirector = create<DirectorState>()((set, get) => {
       orchestrator.reset();
       orchestrator.appendLog("sys", "director: scenario start");
       set({ status: "playing", stepIndex: -1, runId, caption: null, lastResult: null });
+      skipRequested = false;
 
       for (let i = 0; i < SCENARIO.length; i++) {
         if (get().runId !== runId || get().status === "idle") return;
+        // One skip consumes one step: a press during the previous hold never leaks into this one.
+        skipRequested = false;
         const step = SCENARIO[i];
         set({ stepIndex: i, caption: step.caption, title: step.title });
         await gate();
@@ -136,9 +156,13 @@ export const useDirector = create<DirectorState>()((set, get) => {
           let r = out.next();
           while (!r.done) {
             set({ lastResult: r.value });
-            await wait((r.value.bounced ? 1400 : 260) / speed);
-            await gate();
-            if (get().runId !== runId) return;
+            // A skip drains the remaining frames synchronously (the engine is synchronous and
+            // deterministic, and refresh() still runs per frame), so the last frame shows 32/32.
+            if (!skipRequested) {
+              await wait((r.value.bounced ? 1400 : 260) / speed);
+              await gate();
+              if (get().runId !== runId) return;
+            }
             r = out.next();
           }
           last = r.value;
@@ -147,10 +171,11 @@ export const useDirector = create<DirectorState>()((set, get) => {
         }
         set({ lastResult: last });
         useOrchestrator.getState().appendLog(last.ok ? "sys" : "error", `director: ${step.title} · ${last.summary}`);
-        await wait(step.holdMs / get().speed);
+        if (!skipRequested) await wait(step.holdMs / get().speed);
         await gate();
       }
       if (get().runId === runId) {
+        skipRequested = false;
         set({ status: "done", caption: "SCENARIO COMPLETE · three jobs routed, three refused, artefact parity verified, ledger intact.", title: "Scenario complete" });
         useOrchestrator.getState().appendLog("sys", "director: SCENARIO COMPLETE");
         await flyTo("overview");
@@ -173,8 +198,16 @@ export const useDirector = create<DirectorState>()((set, get) => {
       set({ status: "playing" });
     },
 
+    /**
+     * Jump to the next step. During a hold the hold ends; during the diode transfer the remaining
+     * chunks are drained at once; during a camera flight the flight lands first and the step's
+     * hold is then skipped.
+     */
     next: () => {
-      if (get().status === "paused") get().resume();
+      const status = get().status;
+      if (status !== "playing" && status !== "paused") return;
+      if (status === "paused") get().resume();
+      skipRequested = true;
       skipResolver?.();
     },
 
@@ -182,6 +215,7 @@ export const useDirector = create<DirectorState>()((set, get) => {
       pauseRelease?.();
       pauseGate = null;
       pauseRelease = null;
+      skipRequested = false;
       skipResolver?.();
       set({ status: "idle", stepIndex: -1, caption: null, title: null, lastResult: null, runId: get().runId + 1, focus: "overview" });
       void flyTo("overview");
@@ -209,6 +243,12 @@ export const useDirector = create<DirectorState>()((set, get) => {
     },
 
     dismissIntro: () => set({ intro: false }),
+
+    setJury: (v) => set({ jury: v }),
+
+    toggleJury: () => set({ jury: !get().jury }),
+
+    setLegendOpen: (v) => set({ legendOpen: v }),
   };
 });
 
