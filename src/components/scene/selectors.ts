@@ -158,3 +158,14 @@ export const selPlaying = (d: D): boolean => d.status === "playing" || d.status 
 export const selFocus = (d: D) => d.focus;
 
 export { IDS as ENV_IDS_ORDERED };
+
+/**
+ * Chunk count of the newest bundle while it sits STAGED in the low-side outbox. The `diode`
+ * signal only exists after the first diode.progress event, so both maps read this to show
+ * a full outbox before anything has crossed. Primitive, stable under Object.is.
+ */
+export const selStagedTotal = (s: OrchestratorState): number => {
+  const list = s.snapshot.artefacts;
+  const a = list[list.length - 1];
+  return a && a.state === "STAGED" && a.transfer ? a.transfer.totalChunks : 0;
+};

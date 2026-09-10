@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
-import { useOrchestrator, type OrchestratorState } from "@/store/orchestrator";
+import { useOrchestrator } from "@/store/orchestrator";
 import { useDirector } from "@/store/director";
 import { MJC } from "@/lib/palette";
-import { parseImportKey, selImportKey, selPlaying, selResetSeq, selStepId } from "../selectors";
+import { parseImportKey, selImportKey, selPlaying, selResetSeq, selStagedTotal, selStepId } from "../selectors";
 import { CONSOLES, DIODE_TEXT, GATE, OUTBOX, QUARANTINE, TICKS, boxCentre, type Box } from "./geometry";
 import { T, useStill } from "./primitives";
 
@@ -18,16 +18,6 @@ const MAX_FLIGHTS = 6;
 const FLIGHT_SECONDS = 0.45;
 const MANUAL_SCAN_MS = 1500;
 const DEFAULT_TOTAL = 32;
-
-/**
- * Chunk count of a bundle staged in the outbox before the first diode.progress event
- * (the `diode` signal only exists once a chunk has crossed). Local to the map; a primitive.
- */
-const selStagedTotal = (s: OrchestratorState): number => {
-  const list = s.snapshot.artefacts;
-  const a = list[list.length - 1];
-  return a && a.state === "STAGED" && a.transfer ? a.transfer.totalChunks : 0;
-};
 
 /**
  * The diode gate, its real `sent/total` counter and 32-tick bar, the low-side outbox and
@@ -175,7 +165,7 @@ export function Diode({ focused, onSelect }: { focused: boolean; onSelect: () =>
 
       {/* operator consoles of the two-person import ceremony */}
       {CONSOLES.map(([x, y], k) => {
-        const approved = info.approvals > k && (ceremony || info.state === "IMPORTED" || info.state === "LOADED");
+        const approved = info.approvals > k && (ceremony || info.state === "IMPORTED");
         const state = approved ? "APPROVED" : ceremony ? "AWAITING" : "STANDBY";
         return <Console key={k} x={x} y={y} operator={info.operators[k] ?? `OPERATOR ${k + 1}`} state={state} />;
       })}

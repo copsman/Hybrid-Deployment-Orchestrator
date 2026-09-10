@@ -7,7 +7,7 @@
  * scenario plays. Plain numbers only: this module is imported by the CI path and
  * must never pull in three.js.
  */
-import type { Classification, EnvId } from "@/engine";
+import type { EnvId } from "@/engine";
 
 export type P = [number, number];
 
@@ -70,19 +70,8 @@ export const LAYER_ABBR: Record<string, string> = {
   Network: "NETWORK",
 };
 
-export interface QueueEntry {
-  jobId: string;
-  classification: Classification;
-}
-
-/** Inverse of selQueueKey (`jobId:classification,...`). */
-export function parseQueueKey(key: string): QueueEntry[] {
-  if (!key) return [];
-  return key.split(",").map((part) => {
-    const i = part.lastIndexOf(":");
-    return { jobId: part.slice(0, i), classification: part.slice(i + 1) as Classification };
-  });
-}
+/** Queue tokens come from the shared string-key selector; re-exported so the map has one geometry import. */
+export { parseQueueKey, type QueueEntry } from "../selectors";
 
 /* ------------------------------------------------------------------ crossings */
 /** Inspection proxy on the cloud → sovereign boundary; the mirror flight (registry row, y ≈ 186) passes through its opening. */
