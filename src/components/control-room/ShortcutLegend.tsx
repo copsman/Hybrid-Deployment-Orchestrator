@@ -52,7 +52,7 @@ export function ShortcutLegend() {
           ))}
         </dl>
         <div className="hud-label border-t border-border/60 pt-3">
-          URL switches · ?intro=0 skips the opener · ?speed=4 runs the director faster
+          URL switches · ?intro=0 skips the opener · ?speed=4 runs the director faster · ?jury=1 opens the jury view
         </div>
       </DialogContent>
     </Dialog>

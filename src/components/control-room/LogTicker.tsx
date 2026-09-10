@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Terminal } from "lucide-react";
 import { useOrchestrator, type LogLevel } from "@/store/orchestrator";
+import { useDirector } from "@/store/director";
 import { cn } from "@/lib/utils";
 
 const TONE: Record<LogLevel, string> = {
@@ -15,13 +16,14 @@ const TONE: Record<LogLevel, string> = {
 
 export function LogTicker() {
   const log = useOrchestrator((s) => s.log);
+  const jury = useDirector((s) => s.jury);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = ref.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [log.length]);
   return (
-    <footer className="relative z-20 flex h-[104px] shrink-0 flex-col border-t border-border/80 bg-background/90 backdrop-blur">
+    <footer className={cn("relative z-20 flex shrink-0 flex-col border-t border-border/80 bg-background/90 backdrop-blur", jury ? "h-[64px]" : "h-[104px]")}>
       <div className="flex items-center gap-2 border-b border-border/50 px-3 py-1">
         <Terminal className="size-3 text-mjc-cyan" />
         <span className="hud-label">event log · {log.length} lines</span>

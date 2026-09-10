@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TracingBeam } from "@/components/aceternity/tracing-beam";
 import { useOrchestrator } from "@/store/orchestrator";
+import { useDirector } from "@/store/director";
 import { short, compareSemver, type ArtefactState, type ArtefactVersion } from "@/engine";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +45,8 @@ export function PipelineTracer() {
   const selectVersion = useOrchestrator((s) => s.selectVersion);
   const pipeline = useOrchestrator((s) => s.pipeline);
   const diode = useOrchestrator((s) => s.diode);
+  // Jury view: the tracer, transfer bar, approvals and verification lines stay; every manual control goes.
+  const jury = useDirector((s) => s.jury);
   const a = artefacts.find((x) => x.version === selected) ?? artefacts.at(-1)!;
   const upcoming = useMemo(() => nextVersion(artefacts.map((x) => x.version)), [artefacts]);
   const [approvalOpen, setApprovalOpen] = useState(false);
@@ -71,9 +74,11 @@ export function PipelineTracer() {
               {x.version}
             </button>
           ))}
-          <Button size="sm" variant="outline" className="h-6 gap-1 px-2 font-mono text-[9px] tracking-[0.14em]" onClick={() => pipeline.build(upcoming)} data-testid="build-next">
-            + BUILD {upcoming}
-          </Button>
+          {!jury && (
+            <Button size="sm" variant="outline" className="h-6 gap-1 px-2 font-mono text-[9px] tracking-[0.14em]" onClick={() => pipeline.build(upcoming)} data-testid="build-next">
+              + BUILD {upcoming}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -121,7 +126,7 @@ export function PipelineTracer() {
                           </span>
                         </div>
                         <Progress value={transferPct} className="mt-1 h-1.5 bg-secondary [&>div]:bg-mjc-amber" />
-                        {(a.state === "STAGED" || a.state === "IN_DIODE") && (
+                        {!jury && (a.state === "STAGED" || a.state === "IN_DIODE") && (
                           <div className="mt-2 flex gap-2">
                             <Button size="sm" variant="outline" className="h-6 px-2 font-mono text-[9px] tracking-[0.14em]" onClick={() => pipeline.diodeStep(a.version, 4)}>
                               SEND 4 CHUNKS
@@ -164,30 +169,32 @@ export function PipelineTracer() {
             </ol>
           </TracingBeam>
 
-          <div className="rounded-md border border-border/70 p-3">
-            <div className="hud-label mb-2">Manual controls · {a.version}</div>
-            <div className="flex flex-wrap gap-2">
-              <Ctl show={a.state === "SIGNED"} onClick={() => pipeline.publish(a.version)} icon={<Send className="size-3" />} label="PUBLISH TO CLOUD" />
-              <Ctl show={a.state === "PUBLISHED"} onClick={() => pipeline.mirror(a.version)} icon={<Send className="size-3" />} label="MIRROR TO ON-PREM" />
-              <Ctl show={a.state === "MIRRORED"} onClick={() => pipeline.stage(a.version)} icon={<ArrowRightToLine className="size-3" />} label="STAGE FOR DIODE" />
-              <Ctl show={a.state === "QUARANTINE" && !scanned} onClick={() => pipeline.scan(a.version)} icon={<ShieldCheck className="size-3" />} label="RUN QUARANTINE SCAN" />
-              <Ctl show={(a.state === "QUARANTINE" && scanned) || (a.state === "VERIFYING" && a.approvals.length < 2)} onClick={() => setApprovalOpen(true)} icon={<Users className="size-3" />} label="TWO-PERSON APPROVAL" testid="open-approval" />
-              <Ctl show={a.state === "VERIFYING" && a.approvals.length >= 2} onClick={() => pipeline.verify(a.version)} icon={<ShieldCheck className="size-3" />} label="VERIFY + IMPORT" testid="verify-import" />
-              <Ctl show={a.state === "IMPORTED"} onClick={() => pipeline.load(a.version)} icon={<Check className="size-3" />} label="LOAD IN ENCLAVE" />
-              {canTamper && (
-                <>
-                  <Ctl show tone="red" onClick={() => pipeline.tamper(a.version, "byte")} icon={<Bug className="size-3" />} label="TAMPER: FLIP A BYTE" testid="tamper-byte" />
-                  <Ctl show tone="red" onClick={() => pipeline.tamper(a.version, "signer")} icon={<Bug className="size-3" />} label="TAMPER: WRONG SIGNER" />
-                </>
-              )}
-              {a.state === "LOADED" && <span className="text-[11px] text-muted-foreground">Version is live in every perimeter. Build the next one to run the pipeline again.</span>}
-              {a.state === "REJECTED" && <span className="text-[11px] text-mjc-red">Rejected bundles never enter the enclave registry. Build a new version and transfer again.</span>}
+          {!jury && (
+            <div className="rounded-md border border-border/70 p-3" data-testid="pipeline-manual">
+              <div className="hud-label mb-2">Manual controls · {a.version}</div>
+              <div className="flex flex-wrap gap-2">
+                <Ctl show={a.state === "SIGNED"} onClick={() => pipeline.publish(a.version)} icon={<Send className="size-3" />} label="PUBLISH TO CLOUD" />
+                <Ctl show={a.state === "PUBLISHED"} onClick={() => pipeline.mirror(a.version)} icon={<Send className="size-3" />} label="MIRROR TO ON-PREM" />
+                <Ctl show={a.state === "MIRRORED"} onClick={() => pipeline.stage(a.version)} icon={<ArrowRightToLine className="size-3" />} label="STAGE FOR DIODE" />
+                <Ctl show={a.state === "QUARANTINE" && !scanned} onClick={() => pipeline.scan(a.version)} icon={<ShieldCheck className="size-3" />} label="RUN QUARANTINE SCAN" />
+                <Ctl show={(a.state === "QUARANTINE" && scanned) || (a.state === "VERIFYING" && a.approvals.length < 2)} onClick={() => setApprovalOpen(true)} icon={<Users className="size-3" />} label="TWO-PERSON APPROVAL" testid="open-approval" />
+                <Ctl show={a.state === "VERIFYING" && a.approvals.length >= 2} onClick={() => pipeline.verify(a.version)} icon={<ShieldCheck className="size-3" />} label="VERIFY + IMPORT" testid="verify-import" />
+                <Ctl show={a.state === "IMPORTED"} onClick={() => pipeline.load(a.version)} icon={<Check className="size-3" />} label="LOAD IN ENCLAVE" />
+                {canTamper && (
+                  <>
+                    <Ctl show tone="red" onClick={() => pipeline.tamper(a.version, "byte")} icon={<Bug className="size-3" />} label="TAMPER: FLIP A BYTE" testid="tamper-byte" />
+                    <Ctl show tone="red" onClick={() => pipeline.tamper(a.version, "signer")} icon={<Bug className="size-3" />} label="TAMPER: WRONG SIGNER" />
+                  </>
+                )}
+                {a.state === "LOADED" && <span className="text-[11px] text-muted-foreground">Version is live in every perimeter. Build the next one to run the pipeline again.</span>}
+                {a.state === "REJECTED" && <span className="text-[11px] text-mjc-red">Rejected bundles never enter the enclave registry. Build a new version and transfer again.</span>}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </ScrollArea>
 
-      <Dialog open={approvalOpen} onOpenChange={setApprovalOpen}>
+      <Dialog open={approvalOpen && !jury} onOpenChange={setApprovalOpen}>
         <DialogContent className="border-border bg-card sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="font-mono text-sm tracking-[0.2em]">TWO-PERSON IMPORT APPROVAL</DialogTitle>

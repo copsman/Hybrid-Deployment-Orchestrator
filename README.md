@@ -67,6 +67,10 @@ The whole story can be driven from the keyboard; the rail in the top bar shows t
 | `J` | jury view (hides the manual controls) |
 | `?` | the legend; `ESC` closes it |
 
+### Jury view
+
+Open `/?jury=1` (or press `J`) for a presentation layout: the submit form, the pipeline and ledger tamper buttons, the raw policy JSON, the next/stop/speed/reset buttons and the WHAT-IF tab are hidden, the scene gets a wider frame, and the side panel follows the story on its own (JOBS → DECISION → PIPELINE → DEPLOYMENTS → DECISION → JOBS → LEDGER; a manual tab click sticks until the next chapter). Everything is still driven by the keys above, so nothing in the room can be edited by accident. The flag lives in the URL only and is never persisted; a plain visit always shows the operator controls.
+
 Headless, no browser:
 
 ```bash

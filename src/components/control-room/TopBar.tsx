@@ -17,6 +17,7 @@ export function TopBar() {
   const speed = useDirector((s) => s.speed);
   const reducedMotion = useDirector((s) => s.reducedMotion);
   const soundOn = useDirector((s) => s.soundOn);
+  const jury = useDirector((s) => s.jury);
   const { play, pause, resume, next, stop, setSpeed, setReducedMotion, toggleSound, setLegendOpen } = useDirector.getState();
   const simNow = useOrchestrator((s) => s.snapshot.now);
   const ledgerOk = useOrchestrator((s) => s.ledgerStatus.ok);
@@ -39,6 +40,7 @@ export function TopBar() {
         <div className="hidden min-w-0 flex-1 items-center gap-4 overflow-hidden lg:flex">
           <Pill led={ledgerOk ? "green" : "red"} label="LEDGER" value={ledgerOk ? "INTACT" : "BROKEN"} />
           <Pill led="cyan" label="POLICY" value="MJC-ROUTING 2031.03" className="hidden 2xl:flex" />
+          {jury && <Pill led="violet" label="VIEW" value="JURY" />}
           <PresenterRail />
         </div>
       </div>
@@ -61,31 +63,36 @@ export function TopBar() {
             <Play className="size-3.5" /> RESUME
           </Button>
         )}
-        <IconBtn label="Next step (N)" onClick={next} disabled={status === "idle" || status === "done"}>
-          <SkipForward className="size-3.5" />
-        </IconBtn>
-        <IconBtn label="Stop scenario" onClick={stop} disabled={status === "idle"}>
-          <Square className="size-3.5" />
-        </IconBtn>
-        <IconBtn
-          label={`Playback speed ${speed}x (+ / −)`}
-          onClick={() => setSpeed(SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length])}
-        >
-          <span className="flex items-center gap-1 font-mono text-[10px]">
-            <Gauge className="size-3.5" />
-            {speed}x
-          </span>
-        </IconBtn>
-        <IconBtn
-          label="Reset sandbox (same seed, identical second run) · SHIFT+R"
-          onClick={() => {
-            stop();
-            reset();
-          }}
-          data-testid="reset"
-        >
-          <RotateCcw className="size-3.5" />
-        </IconBtn>
+        {/* Jury view keeps play/pause, sound, the keys button and the 2D switch; the rest is presenter-keys only. */}
+        {!jury && (
+          <>
+            <IconBtn label="Next step (N)" onClick={next} disabled={status === "idle" || status === "done"}>
+              <SkipForward className="size-3.5" />
+            </IconBtn>
+            <IconBtn label="Stop scenario" onClick={stop} disabled={status === "idle"}>
+              <Square className="size-3.5" />
+            </IconBtn>
+            <IconBtn
+              label={`Playback speed ${speed}x (+ / −)`}
+              onClick={() => setSpeed(SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length])}
+            >
+              <span className="flex items-center gap-1 font-mono text-[10px]">
+                <Gauge className="size-3.5" />
+                {speed}x
+              </span>
+            </IconBtn>
+            <IconBtn
+              label="Reset sandbox (same seed, identical second run) · SHIFT+R"
+              onClick={() => {
+                stop();
+                reset();
+              }}
+              data-testid="reset"
+            >
+              <RotateCcw className="size-3.5" />
+            </IconBtn>
+          </>
+        )}
         <IconBtn label={soundOn ? "Mute (S)" : "Sound on (S)"} onClick={toggleSound}>
           {soundOn ? <Volume2 className="size-3.5" /> : <VolumeX className="size-3.5" />}
         </IconBtn>

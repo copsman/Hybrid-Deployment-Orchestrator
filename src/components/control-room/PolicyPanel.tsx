@@ -5,10 +5,12 @@ import { Braces, ListChecks, ShieldBan } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { POLICY, RULES, ENVIRONMENTS, type PolicyRule } from "@/engine";
 import { ClassificationBadge } from "@/components/shared/ClassificationBadge";
+import { useDirector } from "@/store/director";
 import { cn } from "@/lib/utils";
 
 export function PolicyPanel() {
   const [raw, setRaw] = useState(false);
+  const jury = useDirector((s) => s.jury);
   return (
     <div className="flex h-full min-h-0 flex-col" data-testid="policy-panel">
       <div className="flex items-center gap-2 border-b border-border/60 px-3 py-1.5">
@@ -16,12 +18,14 @@ export function PolicyPanel() {
         <span className="hud-label">
           {POLICY.policyId} · v{POLICY.version} · default {POLICY.defaultEffect}
         </span>
-        <button type="button" onClick={() => setRaw(!raw)} className="ml-auto flex items-center gap-1 font-mono text-[9px] tracking-[0.16em] text-muted-foreground hover:text-foreground">
-          {raw ? <ListChecks className="size-3" /> : <Braces className="size-3" />} {raw ? "CARDS" : "RAW JSON"}
-        </button>
+        {!jury && (
+          <button type="button" onClick={() => setRaw(!raw)} className="ml-auto flex items-center gap-1 font-mono text-[9px] tracking-[0.16em] text-muted-foreground hover:text-foreground">
+            {raw ? <ListChecks className="size-3" /> : <Braces className="size-3" />} {raw ? "CARDS" : "RAW JSON"}
+          </button>
+        )}
       </div>
       <ScrollArea className="min-h-0 flex-1">
-        {raw ? (
+        {raw && !jury ? (
           <pre className="p-3 font-mono text-[10px] leading-relaxed text-foreground/85">{JSON.stringify(POLICY, null, 2)}</pre>
         ) : (
           <div className="space-y-2 p-3">

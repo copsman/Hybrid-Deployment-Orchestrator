@@ -4,6 +4,7 @@ import { Hash, ShieldCheck, ShieldAlert, Bug, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useOrchestrator } from "@/store/orchestrator";
+import { useDirector } from "@/store/director";
 import type { LedgerKind } from "@/engine";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,7 @@ export function LedgerPanel() {
   const entries = useOrchestrator((s) => s.snapshot.ledger);
   const status = useOrchestrator((s) => s.ledgerStatus);
   const tampered = useOrchestrator((s) => s.ledgerTampered);
+  const jury = useDirector((s) => s.jury);
   const { verifyLedger, tamperLedger, restoreLedger } = useOrchestrator.getState();
 
   return (
@@ -34,20 +36,22 @@ export function LedgerPanel() {
           <span className="text-xs text-muted-foreground">· {status.detail}</span>
         </div>
         <div className="mt-1 truncate font-mono text-[10px] text-muted-foreground">head {status.head}</div>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <Button size="sm" variant="outline" className="h-7 gap-1.5 font-mono text-[10px] tracking-[0.16em]" onClick={verifyLedger} data-testid="ledger-verify">
-            <Hash className="size-3" /> VERIFY CHAIN
-          </Button>
-          {!tampered ? (
-            <Button size="sm" variant="outline" className="h-7 gap-1.5 border-mjc-red/50 font-mono text-[10px] tracking-[0.16em] text-mjc-red hover:bg-mjc-red/10" onClick={tamperLedger} data-testid="ledger-tamper">
-              <Bug className="size-3" /> TAMPER A DECISION
+        {!jury && (
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" className="h-7 gap-1.5 font-mono text-[10px] tracking-[0.16em]" onClick={verifyLedger} data-testid="ledger-verify">
+              <Hash className="size-3" /> VERIFY CHAIN
             </Button>
-          ) : (
-            <Button size="sm" variant="outline" className="h-7 gap-1.5 font-mono text-[10px] tracking-[0.16em]" onClick={restoreLedger} data-testid="ledger-restore">
-              <RotateCcw className="size-3" /> RESTORE
-            </Button>
-          )}
-        </div>
+            {!tampered ? (
+              <Button size="sm" variant="outline" className="h-7 gap-1.5 border-mjc-red/50 font-mono text-[10px] tracking-[0.16em] text-mjc-red hover:bg-mjc-red/10" onClick={tamperLedger} data-testid="ledger-tamper">
+                <Bug className="size-3" /> TAMPER A DECISION
+              </Button>
+            ) : (
+              <Button size="sm" variant="outline" className="h-7 gap-1.5 font-mono text-[10px] tracking-[0.16em]" onClick={restoreLedger} data-testid="ledger-restore">
+                <RotateCcw className="size-3" /> RESTORE
+              </Button>
+            )}
+          </div>
+        )}
         <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
           hash<sub>n</sub> = SHA-256( hash<sub>n-1</sub> ‖ canonical-json(entry<sub>n</sub>) ). Editing any historical entry changes its hash and breaks every link after it, so an auditor can prove the routing history was never rewritten.
         </p>

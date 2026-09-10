@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ClassificationBadge } from "@/components/shared/ClassificationBadge";
 import { StatusLED } from "@/components/shared/StatusLED";
 import { useOrchestrator } from "@/store/orchestrator";
+import { useDirector } from "@/store/director";
 import type { Job, JobStatus } from "@/engine";
 import { cn } from "@/lib/utils";
 import { SubmitJobForm } from "./SubmitJobForm";
@@ -22,10 +23,11 @@ export function JobsPanel() {
   const jobs = useOrchestrator((s) => s.snapshot.jobs);
   const selected = useOrchestrator((s) => s.selectedJobId);
   const selectJob = useOrchestrator((s) => s.selectJob);
+  const jury = useDirector((s) => s.jury);
   const ordered = jobs.slice().reverse();
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <SubmitJobForm />
+      {!jury && <SubmitJobForm />}
       <div className="hud-label flex items-center justify-between border-y border-border/60 px-3 py-1.5">
         <span>Jobs · {jobs.length}</span>
         <span>
@@ -48,7 +50,7 @@ export function JobsPanel() {
             {ordered.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">
-                  No jobs yet. Press PLAY SCENARIO, or route one above.
+                  {jury ? "No jobs yet. Press SPACE or PLAY SCENARIO." : "No jobs yet. Press PLAY SCENARIO, or route one above."}
                 </td>
               </tr>
             )}

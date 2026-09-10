@@ -256,14 +256,18 @@ export const useDirector = create<DirectorState>()((set, get) => {
 export function hydrateDirectorPrefs() {
   let intro = true;
   let speed: Speed = 1;
+  // The jury view is a URL contract (?jury=1), deliberately not persisted: a plain visit always
+  // shows the operator controls, and a reused browser profile never hides them by surprise.
+  let jury = false;
   try {
     const params = new URLSearchParams(window.location.search);
     if (params.get("intro") === "0") intro = false;
     const sp = Number(params.get("speed"));
     if (sp === 0.5 || sp === 1 || sp === 2 || sp === 4) speed = sp;
+    jury = params.get("jury") === "1";
   } catch {
     /* no window */
   }
   const reducedMotion = readPref("mjc.reducedMotion", false);
-  useDirector.setState({ reducedMotion, soundOn: readPref("mjc.sound", false), intro: intro && !reducedMotion, speed });
+  useDirector.setState({ reducedMotion, soundOn: readPref("mjc.sound", false), intro: intro && !reducedMotion, speed, jury });
 }

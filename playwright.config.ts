@@ -7,6 +7,9 @@ export default defineConfig({
   timeout: 120_000,
   expect: { timeout: 30_000 },
   fullyParallel: false,
+  // Three spec files each play a full 4x scenario against one `next start`; on a small CI runner
+  // parallel workers can push a run past the 110 s completion budget.
+  workers: process.env.CI ? 1 : undefined,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["github"], ["list"]] : "list",
   use: {
