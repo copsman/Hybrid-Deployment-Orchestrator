@@ -1,0 +1,32 @@
+# MERIDIAN // VANTAGE — local HTTPS reverse proxy
+#
+# `tls internal` makes Caddy mint its own local root CA and a leaf
+# certificate for this host, entirely offline — no ACME, no Let's Encrypt,
+# no call out to any cloud service. Browsers will show a one-time
+# "not trusted" warning until that root CA is trusted; see README for the
+# optional `caddy trust` step.
+
+{
+	admin off
+	auto_https disable_redirects
+}
+
+http://localhost, http://127.0.0.1 {
+	redir https://{host}{uri} permanent
+}
+
+https://localhost, https://127.0.0.1 {
+	tls internal
+
+	encode gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	reverse_proxy app:3000
+}
