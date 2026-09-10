@@ -5,7 +5,8 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { Trail } from "@react-three/drei";
 import { useOrchestrator, type Packet } from "@/store/orchestrator";
-import { CLASS_COLOR, routeCurve, refusedCurve } from "./layout";
+import { CLASS_HEX } from "@/lib/palette";
+import { routeCurve, refusedCurve } from "./layout";
 
 const ROUTE_SECONDS = 2.6;
 const REFUSE_SECONDS = 1.5;
@@ -26,7 +27,7 @@ function PacketMesh({ packet }: { packet: Packet }) {
   const mesh = useRef<THREE.Mesh>(null);
   const mat = useRef<THREE.MeshStandardMaterial>(null);
   const curve = useMemo(() => (packet.to ? routeCurve(packet.to) : refusedCurve()), [packet.to]);
-  const color = CLASS_COLOR[packet.classification] ?? "#22d3ee";
+  const color = CLASS_HEX[packet.classification];
   const t0 = useRef<number | null>(null);
   const total = packet.to ? ROUTE_SECONDS : REFUSE_SECONDS + 0.7;
 

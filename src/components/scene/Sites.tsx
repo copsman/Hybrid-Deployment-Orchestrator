@@ -8,6 +8,7 @@ import { useOrchestrator } from "@/store/orchestrator";
 import { useDirector } from "@/store/director";
 import type { EnvId } from "@/engine";
 import { HUB, SITES, BARRIER, routeCurve, refusedCurve } from "./layout";
+import { selRunning, selSpec } from "./selectors";
 
 const CYAN = "#22d3ee";
 const AMBER = "#f59e0b";
@@ -117,10 +118,10 @@ export function Barrier() {
 }
 
 export function CloudSite() {
-  const env = useOrchestrator((s) => s.snapshot.environments[0]);
+  const running = useOrchestrator(selRunning.cloud);
   const focus = useDirector((s) => s.focus);
   const orbit = useRef<THREE.Group>(null);
-  const busy = env.running.length > 0;
+  const busy = running > 0;
   useFrame((_, dt) => {
     if (orbit.current) orbit.current.rotation.y += dt * (busy ? 1.6 : 0.5);
   });
@@ -166,10 +167,10 @@ export function CloudSite() {
 }
 
 export function OnPremSite() {
-  const env = useOrchestrator((s) => s.snapshot.environments[1]);
+  const spec = useOrchestrator(selSpec.onprem);
+  const used = useOrchestrator(selRunning.onprem);
   const focus = useDirector((s) => s.focus);
-  const slots = env.spec.slots ?? 4;
-  const used = env.running.length;
+  const slots = spec.slots ?? 4;
   return (
     <group position={SITES.onprem}>
       <mesh position={[0, 0.05, 0]}>
@@ -206,10 +207,10 @@ export function OnPremSite() {
 }
 
 export function EnclaveSite() {
-  const env = useOrchestrator((s) => s.snapshot.environments[2]);
+  const spec = useOrchestrator(selSpec.airgapped);
+  const used = useOrchestrator(selRunning.airgapped);
   const focus = useDirector((s) => s.focus);
-  const used = env.running.length;
-  const slots = env.spec.slots ?? 2;
+  const slots = spec.slots ?? 2;
   const ring = useRef<THREE.Mesh>(null);
   useFrame((_, dt) => {
     if (ring.current) ring.current.rotation.z -= dt * 0.35;

@@ -14,12 +14,19 @@ export interface LogLine {
   text: string;
 }
 
+export type PacketVerdict = "ROUTE" | "QUEUE" | "REFUSE";
+
 export interface Packet {
   id: string;
   jobId: string;
   classification: Classification;
   /** destination environment, or null when refused at the policy barrier */
   to: EnvId | null;
+  verdict: PacketVerdict;
+  /** rule that refused the job (REFUSE only) */
+  ruleId: string | null;
+  /** queue position at the destination (QUEUE only) */
+  position: number | null;
   bornAt: number;
 }
 
@@ -32,7 +39,7 @@ export interface DiodeSignal {
   active: boolean;
 }
 
-interface OrchestratorState {
+export interface OrchestratorState {
   engine: Engine;
   snapshot: EngineSnapshot;
   log: LogLine[];
@@ -45,7 +52,9 @@ interface OrchestratorState {
   selectedVersion: string;
   whatIfReport: WhatIfReport | null;
   activeEnv: EnvId | null;
-  alert: { text: string; at: number } | null;
+  alert: { text: string; at: number; ruleId: string | null } | null;
+  /** increments on every reset() so animations can drop timers that belong to the previous run */
+  resetSeq: number;
 
   refresh: () => void;
   submit: (raw: unknown, source?: string) => SubmitResult;
@@ -118,13 +127,23 @@ export const useOrchestrator = create<OrchestratorState>()((set, get) => {
     const line = describeEvent(e);
     if (line) log(line.level, line.text);
     if (e.type === "job.decided") {
-      const to = e.decision.verdict.kind === "REFUSE" ? null : e.decision.verdict.env;
-      const packet: Packet = { id: `PKT-${++packetSeq}`, jobId: e.job.id, classification: e.job.classification, to, bornAt: Date.now() };
+      const v = e.decision.verdict;
+      const now = Date.now();
+      const packet: Packet = {
+        id: `PKT-${++packetSeq}`,
+        jobId: e.job.id,
+        classification: e.job.classification,
+        to: v.kind === "REFUSE" ? null : v.env,
+        verdict: v.kind,
+        ruleId: v.kind === "REFUSE" ? v.ruleId : null,
+        position: v.kind === "QUEUE" ? v.position : null,
+        bornAt: now,
+      };
       set((s) => ({
         packets: [...s.packets, packet],
         selectedDecisionId: e.decision.id,
         selectedJobId: e.job.id,
-        alert: to === null ? { text: `${e.job.id} refused · ${e.decision.verdict.kind === "REFUSE" ? e.decision.verdict.ruleId : ""}`, at: Date.now() } : s.alert,
+        alert: v.kind === "REFUSE" ? { text: `${e.job.id} refused · ${v.ruleId}`, at: now, ruleId: v.ruleId } : s.alert,
       }));
     }
     if (e.type === "diode.progress") {
@@ -167,6 +186,7 @@ export const useOrchestrator = create<OrchestratorState>()((set, get) => {
     whatIfReport: null,
     activeEnv: null,
     alert: null,
+    resetSeq: 0,
 
     refresh,
 
@@ -218,6 +238,7 @@ export const useOrchestrator = create<OrchestratorState>()((set, get) => {
     reset: () => {
       get().engine.reset();
       logSeq = 0;
+      packetSeq = 0;
       set({
         snapshot: get().engine.snapshot(),
         log: [{ id: ++logSeq, at: get().engine.clock.iso(), level: "sys", text: "sandbox reset · SCRIBE 1.3.0 loaded in all three perimeters" }],
@@ -231,6 +252,7 @@ export const useOrchestrator = create<OrchestratorState>()((set, get) => {
         whatIfReport: null,
         activeEnv: null,
         alert: null,
+        resetSeq: get().resetSeq + 1,
       });
     },
 

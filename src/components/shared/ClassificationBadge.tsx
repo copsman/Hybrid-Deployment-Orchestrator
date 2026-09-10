@@ -30,9 +30,5 @@ export function ClassificationBadge({ level, size = "sm", marking = false, class
   );
 }
 
-export const CLASS_HEX: Record<Classification, string> = {
-  OPEN: "#22d3ee",
-  RESTRICTED: "#f59e0b",
-  SECRET: "#f43f5e",
-  ONYX: "#a78bfa",
-};
+/** Kept for existing importers; the table itself lives in the shared palette. */
+export { CLASS_HEX } from "@/lib/palette";
