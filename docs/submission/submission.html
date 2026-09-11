@@ -278,7 +278,7 @@
         <div class="card">
           <h3>Automated checks</h3>
           <ul class="xs">
-            <li><b>40 vitest tests</b>, property-based with fast-check: SECRET never on cloud or on-prem; ONYX always refused; live retrieval never in the enclave; personal data never in cloud; every verdict has a rule id and justification; ledger tampering detected at any position; flipped byte or wrong signer always rejected; schema never throws.</li>
+            <li><b>56 vitest tests</b> (40 engine, 16 scene), property-based with fast-check: SECRET never on cloud or on-prem; ONYX always refused; live retrieval never in the enclave; personal data never in cloud; every verdict has a rule id and justification; ledger tampering detected at any position; flipped byte or wrong signer always rejected; schema never throws.</li>
             <li><b>Headless demo</b> exits non-zero on failure; CI runs it twice and diffs decisions, digests and ledger head.</li>
             <li><b>Playwright</b> plays the UI to "SCENARIO COMPLETE", breaks and restores the ledger, submits garbage JSON, resets.</li>
             <li><b>Fresh clone:</b> <span class="mono">npm ci &amp;&amp; npm run build &amp;&amp; npm start</span> serves the production build; demo, tests and build pass from a clean checkout.</li>
