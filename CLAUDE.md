@@ -9,6 +9,7 @@ Hackathon entry: **Hybrid Deployment Orchestrator (Cloud + On-Prem + Air-Gapped 
 - Crypto is SHA-256 + Ed25519 (`@noble/*`) over canonical JSON, all through `src/engine/artefacts/crypto.ts`. **Nothing is encrypted anywhere**, deliberately. Do not add encryption, custom primitives or new crypto libraries.
 - Fictional names only: Meridian Joint Command, OPEN / RESTRICTED / SECRET / ONYX, Meridian Cloud Region North, Fort Meridian Datacentre, Enclave OBSIDIAN. A test fails on real-world military terms.
 - Simulated only: no API keys, no network calls, no database required to run or test. The scene loads exactly one asset, `public/fonts/GeistMono-Regular.ttf`, from its own origin.
+- `next.config.ts` sets `output: "standalone"` for Docker only; it must stay off when `VERCEL` is set, because Vercel's adapter build does not emit `.next/next-server.js.nft.json` and the standalone copy step fails with ENOENT.
 - Dependencies are pinned exactly. React must stay at 19.2.8 (react-three-fiber peer range), TypeScript 5.x, ESLint 9.x, `@playwright/test` 1.56.1. `npm ci` must pass without `--legacy-peer-deps`.
 - Determinism: same seed produces the same decisions, digests and ledger hashes. Keep the clock and PRNG injectable; never read wall-clock time inside the engine.
 - Keep the browser-test contract in `tests/e2e/*.spec.ts`: the `data-testid`s, the `2D MAP · <LABEL>` focus badge text, `ledger-status` reading `CHAIN INTACT` / `CHAIN BROKEN`, exactly one element matching "Submission rejected" (the toast; the orchestrator's log line says "rejected by the schema" on purpose), and the jury view hiding every manual control. Change a spec only for an intentional UI change.
@@ -20,13 +21,14 @@ Hackathon entry: **Hybrid Deployment Orchestrator (Cloud + On-Prem + Air-Gapped 
 
 ```
 npm ci                 # exact deps
-npm run dev            # control room on :3000 (?intro=0 skips opener, ?speed=4 faster director, ?jury=1 jury view, ?stats=1 logs draw calls; M toggles the 2D map, ? lists the presenter keys)
+npm run build && npm start   # production server on :3000 — what judges, Vercel and Docker run (npm run prod does both)
+npm run dev            # dev server on :3000, for editing only (?intro=0 skips opener, ?speed=4 faster director, ?jury=1 jury view, ?stats=1 logs draw calls; M toggles the 2D map, ? lists the presenter keys)
 npm run demo           # headless scenario, exit 0 only if every check passes (--json for machine output)
 npm test               # vitest + fast-check: engine invariants, scene layout invariants, label glyph coverage
 npm run verify         # typecheck + lint + test + demo + build  — run before every push
 npm run e2e            # Playwright (smoke ×2, presenter, jury) against a production build — run after UI changes
 npm run walkthrough    # record docs/walkthrough/*.webm + poster and refresh docs/screenshots (WALKTHROUGH_HEADED=1 for a real GPU)
-npm run submission     # rebuild docs/submission/*.pdf (SUBMISSION_TEAM / SUBMISSION_LIVE_URL / SUBMISSION_DATE)
+npm run submission     # rebuild docs/submission/*.pdf (team "Event Horizon" by default; SUBMISSION_TEAM / SUBMISSION_LIVE_URL / SUBMISSION_DATE override)
 
 make up                 # docker compose: build the image, serve the same demo behind a local HTTPS proxy (Caddy, self-minted cert) — needs only Docker + Docker Compose, no Node
 make down / make clean  # stop, or stop + drop volumes (Caddy's local CA)

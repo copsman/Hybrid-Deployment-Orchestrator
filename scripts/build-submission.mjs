@@ -3,7 +3,8 @@
  * with the Chromium that ships with Playwright. No other tooling required.
  *
  *   npm run submission
- *   SUBMISSION_TEAM="Team Name" SUBMISSION_LIVE_URL="https://your-app.vercel.app" npm run submission
+ *   SUBMISSION_LIVE_URL="https://your-app.vercel.app" npm run submission   # team defaults to "Event Horizon"
+ *   SUBMISSION_TEAM="Other Team" npm run submission                          # override the team name
  *   SUBMISSION_PREVIEW_DIR=./previews npm run submission   # also writes one PNG per page
  */
 import { chromium } from "@playwright/test";
@@ -17,7 +18,7 @@ const renderPath = path.join(root, "docs/submission/.render.html");
 const outPath = path.join(root, "docs/submission/MERIDIAN-VANTAGE-submission.pdf");
 const previewDir = process.env.SUBMISSION_PREVIEW_DIR;
 
-const team = process.env.SUBMISSION_TEAM ?? "Team VANTAGE";
+const team = process.env.SUBMISSION_TEAM ?? "Event Horizon";
 const liveUrl = process.env.SUBMISSION_LIVE_URL ?? "deployed on Vercel · URL in README";
 const date = process.env.SUBMISSION_DATE ?? new Date().toISOString().slice(0, 10);
 

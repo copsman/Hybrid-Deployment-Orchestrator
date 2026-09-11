@@ -116,7 +116,7 @@
         <div class="k">Team</div><div>{{TEAM}}</div>
         <div class="k">Repository</div><div class="mono small">github.com/copsman/Hybrid-Deployment-Orchestrator</div>
         <div class="k">Live demo</div><div class="mono small">{{LIVE_URL}}</div>
-        <div class="k">Run locally</div><div class="mono small">npm ci &amp;&amp; npm run dev · npm run demo · npm test</div>
+        <div class="k">Run locally</div><div class="mono small">npm ci &amp;&amp; npm run build &amp;&amp; npm start → http://localhost:3000 (production) · npm run demo · npm test</div>
       </div>
       <div class="chips">
         <span class="chip c-muted">Next.js 16</span><span class="chip c-muted">TypeScript</span><span class="chip c-muted">react-three-fiber</span><span class="chip c-muted">shadcn/ui</span><span class="chip c-muted">Ed25519 · SHA-256</span><span class="chip c-muted">vitest · fast-check · Playwright</span><span class="chip c-muted">Vercel</span>
@@ -281,7 +281,7 @@
             <li><b>40 vitest tests</b>, property-based with fast-check: SECRET never on cloud or on-prem; ONYX always refused; live retrieval never in the enclave; personal data never in cloud; every verdict has a rule id and justification; ledger tampering detected at any position; flipped byte or wrong signer always rejected; schema never throws.</li>
             <li><b>Headless demo</b> exits non-zero on failure; CI runs it twice and diffs decisions, digests and ledger head.</li>
             <li><b>Playwright</b> plays the UI to "SCENARIO COMPLETE", breaks and restores the ledger, submits garbage JSON, resets.</li>
-            <li><b>Fresh clone:</b> <span class="mono">npm ci</span>, demo, tests and build pass from a clean checkout.</li>
+            <li><b>Fresh clone:</b> <span class="mono">npm ci &amp;&amp; npm run build &amp;&amp; npm start</span> serves the production build; demo, tests and build pass from a clean checkout.</li>
           </ul>
         </div>
         <div class="card">

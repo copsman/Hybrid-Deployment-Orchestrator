@@ -52,20 +52,25 @@ A **policy router** takes each job, evaluates a declarative, deny-by-default rul
 
 ## Quick start
 
-Two ways to run it — pick one. Local Node is faster to iterate on; Docker needs nothing installed but Docker itself.
+### For the judges: run the production build
 
-Requires **Node 22** (`.nvmrc` provided) and npm.
+Requires **Node 22** (`.nvmrc` provided) and npm. No API keys, no environment variables, no database, no network access at runtime. From a fresh clone, three commands:
 
 ```bash
-npm ci            # exact, locked dependencies
-npm run dev       # control room on http://localhost:3000
+npm ci            # exact, locked dependencies (about a minute)
+npm run build     # production build (about a minute, one-time)
+npm start         # serves it on http://localhost:3000
 ```
 
-Press **PLAY SCENARIO** in the top bar (or **PLAY THE SCENARIO** on the intro screen). The director resets the sandbox, submits the jobs, refuses the ones policy forbids, ships version 1.4.0 through the diode, and finishes with a ledger verification. Press it again for an identical second run. Useful URL switches: `?intro=0` skips the opener, `?speed=4` runs the director four times faster, `?jury=1` opens the jury view, and the **2D** toggle (or `M`) swaps the 3D scene for the SVG map. Press `?` for the presenter keys.
+Then open **http://localhost:3000** in Chrome, Edge or Firefox. `npm run prod` is the same build-then-start in one command, and `Ctrl+C` stops the server. This is the same production server that Vercel and the Docker image run: pages are pre-rendered, nothing compiles on first visit, and the 3D control room starts at full frame rate. Please use this rather than `npm run dev`: development mode compiles on demand (the first load takes several seconds and stutters), and it double-mounts components, which can drop the WebGL context of the 3D scene.
+
+If port 3000 is taken: `npm start -- -p 4000`. If Node 22 is not installed: `nvm use` picks it from `.nvmrc`, or use the Docker route below, which needs no Node at all.
+
+Press **PLAY SCENARIO** in the top bar (or **PLAY THE SCENARIO** on the intro screen). The director resets the sandbox, submits the jobs, refuses the ones policy forbids, ships version 1.4.0 through the diode, and finishes with a ledger verification. Press it again for an identical second run. Headless checks from the same clone: `npm run demo` (the whole scenario in Node, exit 0 only if every check passes) and `npm test` (56 unit and property tests). Useful URL switches: `?intro=0` skips the opener, `?speed=4` runs the director four times faster, `?jury=1` opens the jury view, and the **2D** toggle (or `M`) swaps the 3D scene for the SVG map. Press `?` for the presenter keys.
 
 ### Run with Docker
 
-Requires only **Docker** and **Docker Compose** (`docker compose version`) — no Node install, no npm, and no cloud account of any kind.
+Requires only **Docker** and **Docker Compose** (`docker compose version`) — no Node install, no npm, and no cloud account of any kind. The image contains the same production build as above, served over HTTPS.
 
 ```bash
 make up           # builds the image, starts the app + a local HTTPS proxy
@@ -82,7 +87,11 @@ make verify       # typecheck + lint + test + demo + build, in a throwaway conta
 make clean        # also remove the named volumes (Caddy's local CA cache)
 ```
 
-See `docker-compose.yml`, `Dockerfile` and `deploy/Caddyfile` for the details. Nothing here changes what the app does — the container just packages the same fully simulated, deterministic demo (`npm run dev` / `npm ci` above still work unchanged for local Node development).
+See `docker-compose.yml`, `Dockerfile` and `deploy/Caddyfile` for the details. Nothing here changes what the app does — the container just packages the same fully simulated, deterministic demo.
+
+### Development mode
+
+For editing the code only: `npm ci && npm run dev` starts the Next.js dev server with hot reload on http://localhost:3000. It is slower to start, compiles each page on first visit and double-mounts components, so it is not the way to demo the app.
 
 ### Presenter keys
 
@@ -117,7 +126,7 @@ npm run e2e              # Playwright (smoke, presenter, jury) against a product
 npm run walkthrough      # record the ninety-second video + poster and refresh docs/screenshots from a production build
 ```
 
-Production build and Vercel: `npm run build && npm start`. The project deploys to Vercel with the default Next.js preset and no environment variables.
+Production build and Vercel: `npm run build && npm start` (or `npm run prod`). The project deploys to Vercel with the default Next.js preset and no environment variables. `next.config.ts` enables `output: "standalone"` for the Docker image but leaves the output mode at its default when `VERCEL` is set: on Vercel, Next 16 hands the build to Vercel's adapter, which does not produce the `.next/next-server.js.nft.json` trace that standalone output copies from, so a standalone build there fails with `ENOENT`.
 
 ---
 
@@ -228,7 +237,7 @@ The policy engine plays the role an OPA or Cedar sidecar plays in production; th
 
 ## Submission deck and roadmap
 
-- `docs/submission/MERIDIAN-VANTAGE-submission.pdf` is the five-page jury deck (title, objective, solution, validation, results). Regenerate it with `npm run submission`; set `SUBMISSION_TEAM` and `SUBMISSION_LIVE_URL` to stamp your team name and Vercel URL onto the title page. The source is `docs/submission/submission.html`.
+- `docs/submission/MERIDIAN-VANTAGE-submission.pdf` is the five-page jury deck (title, objective, solution, validation, results) for team **Event Horizon**. Regenerate it with `npm run submission`; set `SUBMISSION_LIVE_URL` to stamp the Vercel URL onto the title page (`SUBMISSION_TEAM` overrides the team name, `SUBMISSION_DATE` the date). The source is `docs/submission/submission.html`.
 - `docs/ROADMAP.md` lists what comes after the hackathon: real inference adapters, ledger persistence, OPA/Cedar export, cosign-signed bundles, coalition releasability, attestation, and the research directions.
 
 ## Limitations

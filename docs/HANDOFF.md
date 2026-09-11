@@ -41,7 +41,7 @@ npm test               # vitest + fast-check (tests/engine, tests/scene)
 npm run verify         # typecheck + lint + test + demo + build
 npm run e2e            # Playwright against a production build (run `npx playwright install chromium` once; E2E_PORT to move off 3111)
 npm run walkthrough    # video + poster + screenshots (WALKTHROUGH_HEADED=1 for the real GPU; knobs in the script header)
-npm run submission     # rebuild the PDF; SUBMISSION_TEAM / SUBMISSION_LIVE_URL / SUBMISSION_DATE stamp the title page
+npm run submission     # rebuild the PDF; team defaults to "Event Horizon", SUBMISSION_TEAM / SUBMISSION_LIVE_URL / SUBMISSION_DATE override the title page
 ```
 
 ## Container deployment
@@ -125,8 +125,8 @@ Dockerfile, docker-compose.yml, Makefile, .dockerignore, .env.example, deploy/Ca
 
 ## Open items (priority order)
 
-1. **Push the branch, then deploy to Vercel.** Today's commits are local (the integrating shell had no GitHub credentials): `npm run verify && git push origin claude/hybrid-deployment-orchestrator-5bzv3m`. Then import the repo in Vercel (default Next.js preset, no environment variables, Node pinned to 22 in `package.json`), put the URL into the README quick start, regenerate the deck with `SUBMISSION_TEAM="…" SUBMISSION_LIVE_URL="https://…" npm run submission`, commit and push.
-2. **Team name.** The title page still reads "Team VANTAGE"; set the real name with `SUBMISSION_TEAM` in the same `npm run submission`.
+1. **Deploy to Vercel, then stamp the URL.** Import the repo in Vercel (default Next.js preset, no environment variables, Node pinned to 22 in `package.json`). The first attempt failed with `ENOENT … .next/next-server.js.nft.json`: on Vercel, Next 16 runs the build through Vercel's adapter (`NEXT_ADAPTER_PATH`), which under Turbopack never writes that trace file, and the `output: "standalone"` copy step then reads it. Reproduced locally by running `next build` with `@vercel/next`'s adapter, fixed in `next.config.ts` by leaving `output` at its default when `VERCEL` is set (Docker keeps standalone). Once the deployment is live, put the URL into the README quick start, regenerate the deck with `SUBMISSION_LIVE_URL="https://…" npm run submission`, commit and push.
+2. **Team name: done.** The deck is stamped "Event Horizon" (the default in `scripts/build-submission.mjs`; `SUBMISSION_TEAM` overrides it). The README quick start now tells the judges to run the production build (`npm ci && npm run build && npm start`, or `npm run prod`) rather than `npm run dev`.
 3. **Optional polish, not done:** narration audio synced to the captions (a separate layer; `sfx.setEnabled` / `sfx.ambient` are safe to call from anywhere and the video has no audio track to merge with); the judges' presenter follow-ups — hide the upright zone banners at the close presets where they fill the frame, and a key-hint strip on the presenter rail when the top bar is wide enough.
 4. **If time allows:** items from the "now" section of `docs/ROADMAP.md`, starting with real inference adapters behind the existing environment interface, simulated drivers staying the default.
 
