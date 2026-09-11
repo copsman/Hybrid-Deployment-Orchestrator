@@ -27,6 +27,10 @@ npm run verify         # typecheck + lint + test + demo + build  — run before 
 npm run e2e            # Playwright (smoke ×2, presenter, jury) against a production build — run after UI changes
 npm run walkthrough    # record docs/walkthrough/*.webm + poster and refresh docs/screenshots (WALKTHROUGH_HEADED=1 for a real GPU)
 npm run submission     # rebuild docs/submission/*.pdf (SUBMISSION_TEAM / SUBMISSION_LIVE_URL / SUBMISSION_DATE)
+
+make up                 # docker compose: build the image, serve the same demo behind a local HTTPS proxy (Caddy, self-minted cert) — needs only Docker + Docker Compose, no Node
+make down / make clean  # stop, or stop + drop volumes (Caddy's local CA)
+make verify / make test / make demo   # same checks as above, run inside a throwaway container
 ```
 
 ## Working conventions

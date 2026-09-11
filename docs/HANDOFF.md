@@ -1,6 +1,8 @@
 # MERIDIAN // VANTAGE — handoff
 
-**Repository:** `copsman/Hybrid-Deployment-Orchestrator` · **branch:** `claude/hybrid-deployment-orchestrator-5bzv3m`. The default branch has not been touched and no pull request has been opened. The commits of 2026-09-10 are local until the branch is pushed (open item 1).
+**Repository:** `copsman/Hybrid-Deployment-Orchestrator` · **hackathon branch:** `claude/hybrid-deployment-orchestrator-5bzv3m`. The default branch has not been touched and no pull request has been opened. The commits of 2026-09-10 are local until the branch is pushed (open item 1).
+
+**Docker/HTTPS packaging branch:** `feature/docker-https-deployment`, branched off the hackathon branch to add a container-based way to run the demo (see "Container deployment" below) without touching the engine, UI or scenario. Not yet merged back; treat it as additive infrastructure, not part of the jury submission itself.
 
 **What it is:** a hackathon entry for "Hybrid Deployment Orchestrator (Cloud + On-Prem + Air-Gapped Simulation)". A Next.js 16 app that simulates one AI model (`mjc/scribe-8b`, the fictional SCRIBE assistant) deployed across three environments of the fictional Meridian Joint Command, with policy-based routing by classification, a signed artefact pipeline through a one-way data diode, a hash-chained decision ledger, a cinematic 3D control room, and a headless CLI that runs the same scenario.
 
@@ -41,6 +43,16 @@ npm run e2e            # Playwright against a production build (run `npx playwri
 npm run walkthrough    # video + poster + screenshots (WALKTHROUGH_HEADED=1 for the real GPU; knobs in the script header)
 npm run submission     # rebuild the PDF; SUBMISSION_TEAM / SUBMISSION_LIVE_URL / SUBMISSION_DATE stamp the title page
 ```
+
+## Container deployment
+
+Added on `feature/docker-https-deployment` (2026-09-10): a way to run the same simulated demo with **only Docker + Docker Compose** installed — no Node, no npm. Two containers behind `make up`: `app` (multi-stage `Dockerfile`, `node:22-alpine`, `npm run build` with `next.config.ts`'s new `output: "standalone"`, runs as non-root `nextjs`, read-only filesystem, all capabilities dropped, never publishes a port itself) and `proxy` (`caddy:2.10-alpine`, terminates HTTPS with a certificate it mints itself via `tls internal`, publishes 80/443, `depends_on: app` gated on the app's own healthcheck). `docker-compose.yml`, `Dockerfile`, `deploy/Caddyfile`, `Makefile`, `.dockerignore`, `.env.example` (only `HTTP_PORT` / `HTTPS_PORT` — no secrets, matching the no-API-keys rule). `make verify` / `make test` / `make demo` run the real `npm run verify` / `npm test` / `npm run demo` inside a throwaway `builder`-stage container, so CI-equivalent checks need no local Node either.
+
+**Non-obvious fix, keep it:** `deploy/Caddyfile`'s site addresses must name explicit hosts — `http://localhost, http://127.0.0.1` and `https://localhost, https://127.0.0.1` — not a bare `http://` / `https://` catch-all. Caddy's `tls internal` issuer only pre-generates a certificate at startup for hostnames actually present in a site address; with a hostless catch-all there's nothing to issue for, so every TLS handshake dies with `tlsv1 alert internal error` (curl: `SSL routines::tlsv1 alert internal error`) even though the container looks healthy and the config loads cleanly. There is no log line at the moment of the failed handshake, which makes it easy to miss.
+
+**Also non-obvious:** `curl https://localhost` / `wget https://localhost` fail verification by design (`unable to get local issuer certificate` / `Unable to locally verify the issuer's authority`) until the locally-minted root CA is trusted — that's not a bug, it's what `make trust` and the browser's one-time warning are for. `make trust` only *exports* the CA to `/tmp/meridian-ca/`; it does not install it into the OS trust store (deliberately left manual — see the Makefile comment "optional, purely cosmetic"). For scripted/CI checks against the stack, use `curl -k` / `wget --no-check-certificate` rather than trying to make plain `curl` trust it.
+
+`docker compose down` (no `-v`) removes both containers and the `internal` network but keeps the named volumes (`caddy_data`, `caddy_config`); `make clean` (`down -v --remove-orphans`) also drops those, including Caddy's local CA, so the next `make up` mints a fresh root CA and any previously-exported/trusted cert stops matching.
 
 ## Scene architecture
 
@@ -108,6 +120,7 @@ tests/engine/                 canonical, crypto, ledger, policy (property-based)
 tests/scene/                  layout.test.ts (gradient invariants, camera), labels.test.ts (glyph coverage, fictional vocabulary)
 tests/e2e/                    smoke.spec.ts (×2), presenter.spec.ts, jury.spec.ts
 docs/                         screenshots/, walkthrough/, submission/, ROADMAP.md, HANDOFF.md
+Dockerfile, docker-compose.yml, Makefile, .dockerignore, .env.example, deploy/Caddyfile   container deployment (see above)
 ```
 
 ## Open items (priority order)
@@ -136,6 +149,7 @@ docs/                         screenshots/, walkthrough/, submission/, ROADMAP.m
   - Scratch `Vector3` / `Object3D` / `Color` objects for instance writes are module-level singletons: `react-hooks/immutability` rejects mutating a memoised value listed in effect deps. `react-hooks/set-state-in-effect` is on: derive state inside `subscribe` callbacks or timers.
   - Headless Chromium on the dev host reports about 40 fps for the 3D scene, enough for the recorder's 18 fps floor; a slower machine falls back to the 2D map unless `WALKTHROUGH_MODE=3d` (or `WALKTHROUGH_HEADED=1`) is set.
   - Playwright `recordVideo` output plays 11–14 % longer than wall-clock; the guards use wall-clock.
+  - Container deployment gotchas are in "Container deployment" above: the Caddyfile needs explicit `localhost, 127.0.0.1` site addresses (a hostless catch-all silently breaks every TLS handshake), and `curl`/`wget` need `-k` / `--no-check-certificate` against the self-signed cert unless you've run `make trust` and installed that CA yourself.
 
 ## Suggested opening message for the next chat
 

@@ -52,6 +52,8 @@ A **policy router** takes each job, evaluates a declarative, deny-by-default rul
 
 ## Quick start
 
+Two ways to run it — pick one. Local Node is faster to iterate on; Docker needs nothing installed but Docker itself.
+
 Requires **Node 22** (`.nvmrc` provided) and npm.
 
 ```bash
@@ -60,6 +62,27 @@ npm run dev       # control room on http://localhost:3000
 ```
 
 Press **PLAY SCENARIO** in the top bar (or **PLAY THE SCENARIO** on the intro screen). The director resets the sandbox, submits the jobs, refuses the ones policy forbids, ships version 1.4.0 through the diode, and finishes with a ledger verification. Press it again for an identical second run. Useful URL switches: `?intro=0` skips the opener, `?speed=4` runs the director four times faster, `?jury=1` opens the jury view, and the **2D** toggle (or `M`) swaps the 3D scene for the SVG map. Press `?` for the presenter keys.
+
+### Run with Docker
+
+Requires only **Docker** and **Docker Compose** (`docker compose version`) — no Node install, no npm, and no cloud account of any kind.
+
+```bash
+make up           # builds the image, starts the app + a local HTTPS proxy
+```
+
+Open **https://localhost**. The `proxy` container is [Caddy](https://caddyserver.com/) terminating TLS with a certificate it mints itself (`tls internal`) for the `localhost` / `127.0.0.1` addresses — entirely offline, no ACME, no Let's Encrypt, nothing reaches the internet. Browsers show a one-time "not trusted" warning for that self-signed certificate; accept it, or run `make trust` to export the local root CA and add it to your OS/browser trust store. Command-line clients don't get a one-time warning — they refuse outright until you either trust that exported CA or skip verification for local testing: `curl -k https://localhost/`, `wget --no-check-certificate https://localhost/`.
+
+The stack is two containers on an internal bridge network — `app` (the Next.js production server, non-root, read-only filesystem, all Linux capabilities dropped) is never exposed directly; only `proxy` publishes ports 80 (→ redirected to 443) and 443. Override the published ports with a `.env` copied from `.env.example` if 80/443 are taken.
+
+```bash
+make down         # stop and remove the containers
+make logs         # follow both containers' logs
+make verify       # typecheck + lint + test + demo + build, in a throwaway container
+make clean        # also remove the named volumes (Caddy's local CA cache)
+```
+
+See `docker-compose.yml`, `Dockerfile` and `deploy/Caddyfile` for the details. Nothing here changes what the app does — the container just packages the same fully simulated, deterministic demo (`npm run dev` / `npm ci` above still work unchanged for local Node development).
 
 ### Presenter keys
 

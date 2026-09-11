@@ -52,6 +52,7 @@ Status legend: **now** = next sprint after the hackathon, **next** = one to thre
 - ~~Keyboard-driven presenter mode (space to advance, arrows for camera presets) and a "jury view" that hides the manual controls.~~ Done 2026-09-10: `?` lists the keys, `?jury=1` or `J` opens the jury view.
 - ~~Richer sound design.~~ Done 2026-09-10: a synthesised WebAudio kit with an ambient bed, no audio assets.
 - ~~A more organised, more detailed 3D scene and 2D map.~~ Done 2026-09-10: the linear security gradient with state-driven details, mirrored in SVG.
+- ~~A way to run the demo with no local Node/npm toolchain.~~ Done 2026-09-10 on `feature/docker-https-deployment`: `make up` builds and serves the same simulated app behind a local HTTPS proxy (Caddy, self-minted cert) with only Docker installed; not yet merged into the hackathon branch.
 - Optional narration audio synced to the captions (a separate layer on top of the sound kit; the recording has no audio track).
 - Presenter follow-ups from the design review, not done: hide the upright zone banners at the close camera presets where they fill the frame, and a key-hint strip on the presenter rail when the top bar is wide enough.
 
