@@ -6,6 +6,8 @@
 
 **One model. Three perimeters. Every decision justified.**
 
+**Live demo: [hybrid-deployment-orchestrator.vercel.app](https://hybrid-deployment-orchestrator.vercel.app/)**
+
 [![ci](https://github.com/copsman/Hybrid-Deployment-Orchestrator/actions/workflows/ci.yml/badge.svg)](https://github.com/copsman/Hybrid-Deployment-Orchestrator/actions/workflows/ci.yml)
 ![node](https://img.shields.io/badge/node-22.x-3c873a) ![next](https://img.shields.io/badge/next-16.3-black) ![tests](https://img.shields.io/badge/tests-vitest%20%2B%20fast--check%20%2B%20playwright-22d3ee)
 
@@ -52,7 +54,11 @@ A **policy router** takes each job, evaluates a declarative, deny-by-default rul
 
 ## Quick start
 
-### For the judges: run the production build
+### For the judges: the live deployment
+
+The app is deployed on Vercel at **[https://hybrid-deployment-orchestrator.vercel.app/](https://hybrid-deployment-orchestrator.vercel.app/)**. Nothing to install: open it in Chrome, Edge or Firefox and press **PLAY SCENARIO**. It is the same production build as the local steps below, and every run is deterministic, so the two show identical decisions and ledger hashes.
+
+### For the judges: run the production build locally
 
 Requires **Node 22** (`.nvmrc` provided) and npm. No API keys, no environment variables, no database, no network access at runtime. From a fresh clone, three commands:
 
@@ -126,7 +132,7 @@ npm run e2e              # Playwright (smoke, presenter, jury) against a product
 npm run walkthrough      # record the ninety-second video + poster and refresh docs/screenshots from a production build
 ```
 
-Production build and Vercel: `npm run build && npm start` (or `npm run prod`). The project deploys to Vercel with the default Next.js preset and no environment variables. `next.config.ts` enables `output: "standalone"` for the Docker image but leaves the output mode at its default when `VERCEL` is set: on Vercel, Next 16 hands the build to Vercel's adapter, which does not produce the `.next/next-server.js.nft.json` trace that standalone output copies from, so a standalone build there fails with `ENOENT`.
+Production build and Vercel: `npm run build && npm start` (or `npm run prod`). The project is deployed at [https://hybrid-deployment-orchestrator.vercel.app/](https://hybrid-deployment-orchestrator.vercel.app/) with the default Next.js preset and no environment variables. `next.config.ts` enables `output: "standalone"` for the Docker image but leaves the output mode at its default when `VERCEL` is set: on Vercel, Next 16 hands the build to Vercel's adapter, which does not produce the `.next/next-server.js.nft.json` trace that standalone output copies from, so a standalone build there fails with `ENOENT`.
 
 ---
 
@@ -237,7 +243,7 @@ The policy engine plays the role an OPA or Cedar sidecar plays in production; th
 
 ## Submission deck and roadmap
 
-- `docs/submission/MERIDIAN-VANTAGE-submission.pdf` is the five-page jury deck (title, objective, solution, validation, results) for team **Event Horizon**. Regenerate it with `npm run submission`; set `SUBMISSION_LIVE_URL` to stamp the Vercel URL onto the title page (`SUBMISSION_TEAM` overrides the team name, `SUBMISSION_DATE` the date). The source is `docs/submission/submission.html`.
+- `docs/submission/MERIDIAN-VANTAGE-submission.pdf` is the five-page jury deck (title, objective, solution, validation, results) for team **Event Horizon**. Its title page carries the live URL above. Regenerate it with `npm run submission` (`SUBMISSION_TEAM`, `SUBMISSION_LIVE_URL` and `SUBMISSION_DATE` override the team name, URL and date). The source is `docs/submission/submission.html`.
 - `docs/ROADMAP.md` lists what comes after the hackathon: real inference adapters, ledger persistence, OPA/Cedar export, cosign-signed bundles, coalition releasability, attestation, and the research directions.
 
 ## Limitations

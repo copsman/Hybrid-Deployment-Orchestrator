@@ -3,7 +3,7 @@
  * with the Chromium that ships with Playwright. No other tooling required.
  *
  *   npm run submission
- *   SUBMISSION_LIVE_URL="https://your-app.vercel.app" npm run submission   # team defaults to "Event Horizon"
+ *   SUBMISSION_LIVE_URL="https://other-host.example" npm run submission     # override the live URL (defaults to the Vercel deployment)
  *   SUBMISSION_TEAM="Other Team" npm run submission                          # override the team name
  *   SUBMISSION_PREVIEW_DIR=./previews npm run submission   # also writes one PNG per page
  */
@@ -19,7 +19,7 @@ const outPath = path.join(root, "docs/submission/MERIDIAN-VANTAGE-submission.pdf
 const previewDir = process.env.SUBMISSION_PREVIEW_DIR;
 
 const team = process.env.SUBMISSION_TEAM ?? "Event Horizon";
-const liveUrl = process.env.SUBMISSION_LIVE_URL ?? "deployed on Vercel · URL in README";
+const liveUrl = process.env.SUBMISSION_LIVE_URL ?? "https://hybrid-deployment-orchestrator.vercel.app";
 const date = process.env.SUBMISSION_DATE ?? new Date().toISOString().slice(0, 10);
 
 const html = readFileSync(srcPath, "utf8").replaceAll("{{TEAM}}", team).replaceAll("{{LIVE_URL}}", liveUrl).replaceAll("{{DATE}}", date);
